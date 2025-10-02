@@ -34,7 +34,11 @@ function checkOrCreateCSV() {
     }
 }
 
-// Servire il file HTML e altri file statici
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'game.html'));
+});
+
+// Servire gli altri file statici (CSS, JS, manifest, ecc.)
 app.use(express.static(path.join(__dirname)));
 
 // Endpoint per controllare il file CSV (richiamato al caricamento dell'app)
@@ -45,7 +49,10 @@ app.get('/csvloading', (req, res) => {
 
 // Endpoint per salvare i dati della sessione
 app.post('/updatechart', (req, res) => {
-    const { job, country, context, role, scenario, selectedSkills, finalScore } = req.body;
+    const { job, country, context, role, scenario, selectedSkills } = req.body;
+    
+    // Assicurati che 'finalScore' sia incluso nella destructurazione
+    const finalScore = req.body.finalScore;
 
     if (!job || !country || !context || !role || !scenario || !finalScore) {
         return res.status(400).json({ success: false, message: 'Dati mancanti.' });
@@ -70,7 +77,7 @@ app.post('/updatechart', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server in ascolto su http://localhost:${port}`);
-    console.log(`Apri http://localhost:${port}/game.html nel tuo browser.`);
+    console.log(`Server in ascolto sulla porta ${port}`);
+    console.log(`Apri http://localhost:${port} nel tuo browser per il test locale.`);
     checkOrCreateCSV();
 });
