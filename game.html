@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Skills Game</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #555555;
+            --secondary-color: #dedede;
+            --background-color: #f3f3f3;
+            --card-bg: #e0e0e0;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --neutral-color: #888888;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            min-height: 600px;
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            width: 220px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, border 0.3s;
+            text-align: left;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card.selected {
+            border: 2px solid var(--primary-color);
+            transform: translateY(-5px);
+        }
+        
+        .card .placeholder {
+            width: 100%;
+            height: 120px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+        }
+
+        .card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 25px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            margin-top: 40px;
+        }
+
+        .btn:hover {
+            background-color: #bdbdbd;
+        }
+
+        #intro-text {
+            max-width: 500px;
+            text-align: center;
+            margin: 0 auto 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            max-width: 350px;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .scenario-card-large {
+            display: flex;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .scenario-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        .scenario-details .placeholder {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .scenario-details h3 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .scenario-details p {
+            font-size: 1em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .task-list {
+            flex: 1;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .task-list h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .task-list ul {
+            list-style: none;
+            padding: 0;
+            font-size: 1em;
+        }
+
+        .task-list li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .skills-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .skills-container .arrow {
+            font-size: 3em;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 0 20px;
+            user-select: none;
+        }
+
+        .skills-category {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--secondary-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .skills-category h4 {
+            margin-top: 0;
+            font-weight: 700;
+        }
+
+        .skills-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 30px;
+            text-align: left;
+        }
+
+        .skills-list label {
+            display: flex;
+            align-items: center;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .skills-list input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+
+        .results-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-top: 40px;
+        }
+
+        .score-card {
+            flex: 1;
+            text-align: left;
+        }
+
+        .score-card h3 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            margin-bottom: 15px;
+        }
+
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .score-bar {
+            background-color: #ddd;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .score-bar div {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+
+        .final-score {
+            font-size: 1.8em;
+            font-weight: 700;
+            padding: 15px;
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--correct-color);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .scenario-card-large, .results-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <span class="back-button" onclick="goBack()">&larr;</span>
+
+        <div id="intro" class="page active">
+            <h1>Operator Skills Game</h1>
+            <p id="intro-text">Are you curious to learn more about the impact of Industry 5.0 technologies on people? <br>
+                The role of humans will evolve, and new skills will be required.
+                Press Start and discover how much you know about this topic.</p>
+            <button class="btn" onclick="nextPage('role-selection')">START</button>
+        </div>
+
+        <div id="role-selection" class="page">
+            <h2>Scegli un ruolo:</h2>
+            <div class="card-group">
+                <div class="card" onclick="selectRole('Operator', this)">
+                    <div class="placeholder"></div>
+                    <h3>Operator</h3>
+                    <p>Short description...</p>
+                </div>
+                <div class="card" onclick="selectRole('Supervisor', this)">
+                    <div class="placeholder"></div>
+                    <h3>Supervisor</h3>
+                    <p>Short description...</p>
+                </div>
+                <div class="card" onclick="selectRole('Maintenance technician', this)">
+                    <div class="placeholder"></div>
+                    <h3>Maintenance technician</h3>
+                    <p>Short description...</p>
+                </div>
+            </div>
+            <button class="btn" id="confirm-role-btn" onclick="nextPage('context-selection')" style="display: none;">CONFERMA</button>
+        </div>
+        
+        <div id="context-selection" class="page">
+            <h2>Scegli un contesto lavorativo:</h2>
+            <div class="card-group">
+                <div class="card" onclick="selectContext('Food Sector', this)">
+                    <div class="placeholder"></div>
+                    <h3>Food Sector</h3>
+                    <p>Short description...</p>
+                </div>
+                <div class="card" onclick="selectContext('Automotive Sector', this)">
+                    <div class="placeholder"></div>
+                    <h3>Automotive Sector</h3>
+                    <p>Short description...</p>
+                </div>
+                <div class="card" onclick="selectContext('Logistic Sector', this)">
+                    <div class="placeholder"></div>
+                    <h3>Logistic Sector</h3>
+                    <p>Short description...</p>
+                </div>
+            </div>
+            <button class="btn" id="confirm-context-btn" onclick="showScenario(gameState.context)" style="display: none;">CONFERMA</button>
+        </div>
+        
+        <div id="scenario-details" class="page">
+            <h2 id="scenario-title"></h2>
+            <div class="scenario-card-large">
+                <div class="scenario-details">
+                    <div class="placeholder"></div>
+                    <h3 id="role-name-display"></h3>
+                    <p id="role-description-display"></p>
+                </div>
+                <div class="task-list">
+                    <h3 id="scenario-name-display"></h3>
+                    <h4 id="task-list-title">Lista dei task</h4>
+                    <ul id="task-list-display"></ul>
+                </div>
+            </div>
+            <button class="btn" onclick="nextPage('skills-selection')">INIZIA</button>
+        </div>
+
+        <div id="skills-selection" class="page">
+            <h2 id="skills-question">Seleziona le skills che secondo te permettono a [nome] di poter lavorare in [nome scenario]:</h2>
+            <div class="skills-container">
+                <div class="arrow" onclick="prevCategory()">&lt;</div>
+                <div class="skills-category">
+                    <h4 id="skills-category-title"></h4>
+                    <form id="skills-form">
+                        <div class="skills-list"></div>
+                        <button class="btn" type="submit" style="display: none;"></button>
+                    </form>
+                </div>
+                <div class="arrow" onclick="nextCategory()">&gt;</div>
+            </div>
+            <button class="btn" id="confirm-skills-btn" onclick="nextPage('results')" style="display: none;">CONFERMA</button>
+        </div>
+
+        <div id="results" class="page">
+            <h2 id="results-title">I tuoi risultati</h2>
+            <div class="results-container">
+                <div class="scenario-details">
+                    <div class="placeholder"></div>
+                    <h3 id="results-role-name"></h3>
+                    <p id="results-role-description"></p>
+                </div>
+                <div class="score-card">
+                    <h3>Punteggio</h3>
+                    <div id="score-details"></div>
+                    <div id="final-score" class="final-score">Final score: 60% correct answers</div>
+                </div>
+            </div>
+            <button class="btn" onclick="nextPage('job-info-final')">NEXT</button>
+        </div>
+
+        <div id="job-info-final" class="page">
+            <h2 id="job-title-final">Salva i tuoi risultati</h2>
+            <div class="input-group">
+                <label for="job-final">Job *</label>
+                <input type="text" id="job-final" required>
+            </div>
+            <div class="input-group">
+                <label for="country-final">Country where you work *</label>
+                <input type="text" id="country-final" required>
+            </div>
+            <button class="btn" onclick="saveDataAndReset()">SAVE</button>
+        </div>
+
+        <div id="loading" class="page">
+            <h2>Loading...</h2>
+        </div>
+    </div>
+
+    <script>
+        const allSkills = {
+            "Personal/Soft": ["Meet commitments", "Adapting to changing situations", "Physical strenght", "Managing stressful or challenging conditions", "Observation skills", "Manual Dexterity", "Responsiveness"],
+            "Management": ["Monitoring warehouse security procedures", "Monitoring workers' safety on the production floor", "Safety checking", "Risk assessment", "Supervising staff", "Team management", "Conflict resolution", "Task/Production planning"],
+            "Collab/Comm": ["Avoid collision with AI", "Assign and manage tasks", "Provide feedback to AI systems", "Understand AI-generated insights", "Assisting others in complex situations", "Coordination with the robot work", "Coordination across operators", "System/Machine reports understanding", "Revising algorithm's suggestion"],
+            "Interaction/UX": ["Use voice commands", "Interact physically with cobots", "Use of production monitoring dashboard", "Respond to haptic feedback", "Use gesture-based controls", "Collaborating with robots in shared spaces", "Use of touchscreen-based interface", "Ure AR devices for real-time and visual guidance"],
+            "Analytical": ["Preventive maintenance", "Predictive maintenance", " Problem identification", "Risk assessment", "Making time-critical decisions", "Decision making", "Data interpretation", "Problem Solving"],
+            "Technical": ["Process awareness", "Technical issues resolution", "Digital system usage", "Digital data management", "System state interpretation", "Technical inspection", "Problem/Alert management", "Algorithms output understanding", "Quality assessment","Setting up the activity", "Statistical process control", "Understanding AI systems", "Data processing", "Knowledge of Machine/Robot task", "Machine/Robot maintenance","Machine/Robot setting parameters", "Turning on machines/robot", "Use of the Robot controller", "Understanding the Robot coding/language", "Knowledge of robot mechanisms", "Setting up the robot", "Robot programming", "Understand the robot feedback", "Know how to interact with robots", "Coding"],
+            "Operational": ["Procedures knowledge of error situation", "Task knowledge", "Time Management", "Coping with pressure", "Situational awareness", "Fast task execution", "Procedure Knowledge", "Handling unexpected events and emergencies"]
+        };
+
+       const correctSkillsData = {
+    "Automotive Sector": {
+        "Operator": [
+            "Task knowledge",
+            "Procedures knowledge of error situation",
+            "Situational awareness",
+            "Use of the Robot controller",
+            "Process awareness",
+            "Understand the robot feedback",
+            "Know how to interact with robots ",
+            "Technical issues resolution",
+            "Knowledge of Machine/Robot task",
+            "Coordination with the robot work",
+            "Collaborate with robotic systems in shared workspaces"
+        ],
+        "Supervisor": [
+            "Know how to interact with robots",
+            "Use of the Robot controller",
+            "Understand the robot feedback",
+            "Handling unexpected events and emergencies",
+            "Coordination across operators",
+            "Conflict resolution",
+            "Team management",
+            "Supervising staff",
+            "Monitoring security procedures in warehouse operations"
+        ],
+        "Maintenance technician": [
+            "Knowledge of robot mechanisms",
+            "Robot programming",
+            "Know how to interact with robots",
+            "Use of the Robot controller",
+            "Understand the robot feedback",
+            "Technical issues resolution",
+            "Technical inspection",
+            "Interact physically with cobots",
+            "Problem identification"
+        ]
+    },
+    "Food Sector": {
+        "Operator": [
+           "System state interpretation",
+            "Turning on machines/robot",
+            "Setting up the robot" ,
+            "Problem / Alert management",
+            "Quality assessment",
+            "Use of the Robot controller",
+            "Understand the robot feedback",
+            "Process awareness",
+            "Digital systems usage",
+            "Know how to interact with robots", 
+            "Coordination with the robot work",
+            "Situational awareness",
+            "Task knowledge",
+            "Procedures knowledge",
+            "Procedures knowledge of error situation",
+            "Production monitoring",
+            "Collaborate with robotic systems in shared workspaces"
+        ],
+        "Supervisor": [
+            "Task/Production planning",
+            "Safety checking",
+            "Setting up the activity",
+            "Machine/Robot setting parameters",
+            "Digital systems usage",
+            "Risk assessment",
+            "Problem identification",
+            "Task knowledge",
+            "Handling unexpected events and emergencies"
+        ],
+        "Maintenance technician": [
+            "Technical inspection",
+            "Use of the robot controller",
+            "Data interpretation",
+            "Knowledge of robot mechanisms",
+            "Know how to interact with robots",
+            "Robot programming",
+            "Technical issues resolution",
+            "Understand the robot feedback",
+            "Problem identification"
+        ]
+    },
+    "Logistic Sector": {
+        "Operator": [
+            "Task knowledge",
+            "Procedures knowledge of error situation",
+            "Use of the Robot controller",
+            "Problem / Alert management",
+            "Setting up the activity",
+            "System state interpretation",
+            "Machine/robot setting parameters",
+            "Process awareness",
+            "Know how to interact with robots",
+            "Task/Production planning",
+            "Safety checking",
+            "Decision making",
+            "Problem solving",
+            "Problem identification",
+            "Data interpretation",
+            "Coordination with the robot work"
+        ],
+        "Supervisor": [
+            "Task/Production planning",
+            "Alert management",
+            "Safety checking",
+            "Data interpretation",
+            "Decision Making"
+        ],
+        "Maintenance technician": [
+            "Predictive maintenance",
+            "Data interpretation",
+            "Use of the robot controller",
+            "Setting up the robot",
+            "Machine/robot setting parameters",
+            "Understanding the Robot coding/language",
+            "Technical inspection",
+            "Algorithms output understanding",
+            "Knowledge of robot mechanisms",
+            "Digital System/Machine/Robot automatic reports understanding",
+            "Alert management",
+            "Safety checking",
+            "Interact physically with cobots",
+            "Understand the robot feedback"
+        ]
+    }
+};
+
+        const scenarios = {
+            "Automotive Sector": {
+                tasks: ["Scrivere codice pulito", "Risolvere bug", "Collaborare in team", "Analizzare dati di produzione", "Gestire la supply chain"],
+                highlightedTasks: {
+                    "Operator": ["Scrivere codice pulito", "Risolvere bug"],
+                    "Supervisor": ["Collaborare in team", "Analizzare dati di produzione"],
+                    "Maintenance technician": ["Risolvere bug"]
+                }
+            },
+            "Food Sector": {
+                tasks: ["Pianificare campagne", "Analizzare dati di mercato", "Gestire budget"],
+                highlightedTasks: {
+                    "Operator": ["Pianificare campagne", "Analizzare dati di mercato"],
+                    "Supervisor": ["Gestire budget", "Analizzare dati di mercato"],
+                    "Maintenance technician": ["Pianificare campagne"]
+                }
+            },
+            "Logistic Sector": {
+                tasks: ["Gestire il magazzino", "Pianificare le spedizioni", "Ottimizzare i percorsi"],
+                highlightedTasks: {
+                    "Operator": ["Gestire il magazzino"],
+                    "Supervisor": ["Pianificare le spedizioni"],
+                    "Maintenance technician": ["Ottimizzare i percorsi"]
+                }
+            }
+        };
+        const roles = {
+            "Operator": { name:"Operator", description_as_is: "Ruolo focalizzato sull'operatività di base.", to_be_name : "Smart Line Operator", to_be_description: `Works alongside robots in shared areas,
+                            supervises their operations, and performs basic troubleshooting. As robots handle the most manual and repetitive tasks, this role requires broader skills than before, especially technical, analytical, and collaboration skills.` },
+            "Supervisor": { name:"Supervisor", description_as_is: "Ruolo di supervisione delle attività e del personale.", to_be_name : "Plant Flow-Keeper", to_be_description: `Manages and coordinates the team and work
+                            area, supervises production flows, supports operators and robots, and ensures process efficiency. The role combines strong management, technical, operational, and
+                            analytical skills to plan activities, resolve medium-level issues, and maintain smooth and safe production operations.` },
+            "Maintenance technician": { name: "Maintenance technician", description_as_is: "Ruolo di manutenzione e riparazione di attrezzature.", to_be_name: "Tech Solver", to_be_description: `Acts as the reference for programming robots,
+                            configuring systems to optimise production processes, performing maintenance, and solving technical issues. Requires strong technical skills on new programming codes and solid analytical skills.` },
+
+        };
+
+        let gameState = {
+            currentPage: 'intro',
+            history: ['intro'],
+            user: { job: '', country: '' },
+            role: null,
+            context: null,
+            scenario: null,
+            skills: { selected: {}, correct: {} }
+        };
+        let currentSkillCategory = 0;
+        const skillCategories = Object.keys(allSkills);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('https://career-skills-game-1.onrender.com/csvloading')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore durante il controllo del file CSV:', error);
+                });
+        });
+
+        function renderPage() {
+            const pages = ['intro', 'role-selection', 'context-selection', 'scenario-details', 'skills-selection', 'results', 'job-info-final', 'loading'];
+            pages.forEach(id => {
+                const pageElement = document.getElementById(id);
+                if (pageElement) {
+                    pageElement.classList.remove('active');
+                }
+            });
+            const currentPageElement = document.getElementById(gameState.currentPage);
+            if (currentPageElement) {
+                currentPageElement.classList.add('active');
+            }
+            
+            const backButton = document.querySelector('.back-button');
+            if (backButton) {
+                backButton.style.display = gameState.currentPage === 'intro' ? 'none' : 'block';
+            }
+        }
+
+        function nextPage(pageId) {
+            gameState.history.push(gameState.currentPage);
+            gameState.currentPage = pageId;
+            renderPage();
+            if (pageId === 'skills-selection') {
+                renderSkills();
+            } else if (pageId === 'results') {
+                showResults();
+            } else if (pageId === 'job-info-final') {
+                document.getElementById('job-final').value = gameState.user.job;
+                document.getElementById('country-final').value = gameState.user.country;
+            }
+        }
+
+        function goBack() {
+            if (gameState.history.length > 1) {
+                gameState.currentPage = gameState.history.pop();
+                renderPage();
+            }
+        }
+
+        function clearSelection(className) {
+            const cards = document.querySelectorAll(`.${className}`);
+            cards.forEach(card => card.classList.remove('selected'));
+        }
+
+        function selectRole(role, element) {
+            clearSelection('card');
+            element.classList.add('selected');
+            gameState.role = role;
+            document.getElementById('confirm-role-btn').style.display = 'block';
+            console.log("Ruolo selezionato:", role);
+        }
+
+        function selectContext(context, element) {
+            clearSelection('card');
+            element.classList.add('selected');
+            gameState.context = context;
+            document.getElementById('confirm-context-btn').style.display = 'block';
+            console.log("Contesto selezionato:", context);
+        }
+        
+        function showScenario(scenario) {
+            gameState.scenario = scenario;
+            const scenarioData = scenarios[scenario];
+            const roleData = roles[gameState.role];
+
+            document.getElementById('role-name-display').textContent = gameState.role;
+            document.getElementById('role-description-display').textContent = roleData.description_as_is;
+            document.getElementById('scenario-name-display').textContent = scenario;
+
+            const taskList = document.getElementById('task-list-display');
+            taskList.innerHTML = '';
+            
+            const highlightedTasks = scenarioData.highlightedTasks[gameState.role] || [];
+
+            highlightedTasks.forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = task;
+                li.classList.add('highlighted');
+                taskList.appendChild(li);
+            });
+
+            nextPage('scenario-details');
+        }
+        
+        function renderSkills() {
+            const categoryName = skillCategories[currentSkillCategory];
+            const skills = allSkills[categoryName];
+
+            document.getElementById('skills-category-title').textContent = categoryName;
+            const skillsListDiv = document.querySelector('#skills-form .skills-list');
+            skillsListDiv.innerHTML = '';
+
+            skills.forEach(skill => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="checkbox" name="skill" value="${skill}"> ${skill}`;
+                skillsListDiv.appendChild(label);
+                
+                if (gameState.skills.selected[categoryName] && gameState.skills.selected[categoryName].includes(skill)) {
+                    label.querySelector('input').checked = true;
+                }
+            });
+
+            document.getElementById('skills-question').innerHTML = `Seleziona le skills che secondo te permettono a **${gameState.role}** di poter lavorare nel settore **${gameState.context}**:`;
+            
+            const prevArrow = document.querySelector('.skills-container .arrow:first-child');
+            const nextArrow = document.querySelector('.skills-container .arrow:last-child');
+            if (prevArrow) prevArrow.style.visibility = currentSkillCategory === 0 ? 'hidden' : 'visible';
+            if (nextArrow) nextArrow.style.visibility = currentSkillCategory === skillCategories.length - 1 ? 'hidden' : 'visible';
+
+            const confirmBtn = document.getElementById('confirm-skills-btn');
+            if (confirmBtn) {
+                confirmBtn.style.display = currentSkillCategory === skillCategories.length - 1 ? 'block' : 'none';
+            }
+        }
+
+        function nextCategory() {
+            saveSkills();
+            if (currentSkillCategory < skillCategories.length - 1) {
+                currentSkillCategory++;
+                renderSkills();
+            } else {
+                nextPage('results');
+            }
+        }
+
+        function prevCategory() {
+            if (currentSkillCategory > 0) {
+                saveSkills();
+                currentSkillCategory--;
+                renderSkills();
+            }
+        }
+
+        function saveSkills() {
+            const selected = Array.from(document.querySelectorAll('#skills-form input[name="skill"]:checked'))
+                             .map(input => input.value);
+            const categoryName = skillCategories[currentSkillCategory];
+            gameState.skills.selected[categoryName] = selected;
+        }
+
+        function showResults() {
+    const role = gameState.role;
+    const scenario = gameState.context;
+
+    // Ora le skill corrette vengono recuperate in base a ruolo e scenario
+    const correctSkills = correctSkillsData[scenario][role] || [];
+    
+    let totalCorrectAnswers = 0;
+    let totalPossibleAnswers = 0;
+
+    const scoreDetailsDiv = document.getElementById('score-details');
+    scoreDetailsDiv.innerHTML = '';
+
+    skillCategories.forEach(categoryName => {
+        const selected = gameState.skills.selected[categoryName] || [];
+        
+        const userCorrectInCat = selected.filter(s => correctSkills.includes(s)).length;
+        const totalCorrectInCat = allSkills[categoryName].filter(s => correctSkills.includes(s)).length;
+
+        const percentage = totalCorrectInCat > 0 ? Math.round((userCorrectInCat / totalCorrectInCat) * 100) : 0;
+        
+        totalCorrectAnswers += userCorrectInCat;
+        totalPossibleAnswers += totalCorrectInCat;
+
+        const scoreItem = document.createElement('div');
+        scoreItem.classList.add('score-item');
+        scoreItem.innerHTML = `
+            <div class="score-label">
+                <span>${categoryName}</span>
+                <span style="color: ${percentage >= 70 ? 'var(--correct-color)' : percentage > 30 ? '#ffc107' : 'var(--wrong-color)'};">${percentage}%</span>
+            </div>
+            <div class="score-bar">
+                <div style="width: ${percentage}%; background-color: ${percentage >= 70 ? 'var(--correct-color)' : percentage > 30 ? '#ffc107' : 'var(--wrong-color)'};"></div>
+            </div>
+        `;
+        scoreDetailsDiv.appendChild(scoreItem);
+    });
+
+    const finalPercentage = totalPossibleAnswers > 0 ? Math.round((totalCorrectAnswers / totalPossibleAnswers) * 100) : 0;
+    document.getElementById('final-score').textContent = `Final score: ${finalPercentage}% correct answers`;
+
+    const scenarioData = scenarios[scenario];
+    const roleData = roles[role];
+    
+    if (scenarioData && roleData) {
+        document.getElementById('results-role-name').textContent = roleData.to_be_name;
+        document.getElementById('results-role-description').textContent = roleData.to_be_description;
+        document.getElementById('results-scenario-name').textContent = `Nome scenario: ${scenario}`;
+        const taskList = document.getElementById('results-task-list-display');
+        if (taskList) {
+            taskList.innerHTML = '';
+            const highlightedTasks = scenarioData.highlightedTasks[role] || [];
+            highlightedTasks.forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = task;
+                li.classList.add('highlighted');
+                taskList.appendChild(li);
+            });
+        }
+    }
+}
+        
+        function saveDataAndReset() {
+            const job = document.getElementById('job-final').value;
+            const country = document.getElementById('country-final').value;
+
+            if (!job || !country) {
+                alert("Per favore, inserisci tutte le informazioni richieste.");
+                return;
+            }
+
+            const finalData = {
+                job: job,
+                country: country,
+                context: gameState.context,
+                role: gameState.role,
+                scenario: gameState.scenario,
+                selectedSkills: gameState.skills.selected,
+                finalScore: document.getElementById('final-score').textContent,
+                timestamp: new Date().toISOString()
+            };
+            
+            fetch('https://career-skills-game-1.onrender.com/updatechart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(finalData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Dati salvati con successo sul server:", data.message);
+                    startNewSession();
+                } else {
+                    console.error("Errore del server:", data.message);
+                    alert("Errore nel salvataggio dei dati.");
+                }
+            })
+            .catch((error) => {
+                console.error('Errore di comunicazione:', error);
+                alert("Si è verificato un errore di comunicazione con il server.");
+            });
+        }
+
+        function startNewSession() {
+            gameState = {
+                currentPage: 'intro',
+                history: ['intro'],
+                user: { job: '', country: '' },
+                role: null,
+                context: null,
+                scenario: null,
+                skills: { selected: {}, correct: {} }
+            };
+            currentSkillCategory = 0;
+
+            renderPage();
+        }
+
+        function initializeApp() {
+             fetch('https://career-skills-game-1.onrender.com/csvloading')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore durante il controllo del file CSV:', error);
+                });
+            renderPage();
+        }
+
+        initializeApp();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('Service Worker registrato con successo:', registration);
+                }).catch(error => {
+                    console.log('Registrazione Service Worker fallita:', error);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
