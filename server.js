@@ -1,13 +1,15 @@
 const express = require('express');
-const bodyParser = require = require('body-parser');
+const path = require('path');
+const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const filePath = path.join(__dirname, 'risultati.csv');
 
 // Configurazione Supabase - Sostituisci con le tue credenziali
-const supabaseUrl = process.env.SUPABASE_URL || 'https://wioipjehjipybmwdzfvt.supabase.co';
-const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indpb2lwamVoamlweWJtd2R6ZnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODA5MzAsImV4cCI6MjA3NDk1NjkzMH0.hwGXmF2KMAIHU6n6fQV8XaghKZD6kU_uA4smRFvRhhg';
+const supabaseUrl = process.env.SUPABASE_URL || 'YOUR_SUPABASE_URL';
+const supabaseKey = process.env.SUPABASE_KEY || 'YOUR_SUPABASE_KEY';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Dati delle categorie di skill, necessari per formattare i dati
@@ -21,40 +23,38 @@ const allSkills = {
     "Operational": ["Procedures knowledge of error situation", "Task knowledge", "Time Management", "Coping with pressure", "Situational awareness", "Fast task execution", "Procedure Knowledge", "Handling unexpected events and emergencies"]
 };
 
-// Middleware per analizzare il corpo delle richieste JSON
+// Middleware per analizzare il corpo delle richieste JSON - Ora usiamo express
 app.use(express.json());
 
-// Servire il file HTML e altri file statici
-app.use(express.static(__dirname));
-
-// Aggiungi questa riga per servire game.html come pagina principale
+// Servire il file HTML come pagina principale
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'game.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+// Servire gli altri file statici
+app.use(express.static(__dirname));
 
 // Endpoint per salvare i dati della sessione su Supabase
 app.post('/updatechart', async (req, res) => {
     const { job, country, context, role, scenario, selectedSkills, finalScore, timestamp } = req.body;
     
-    // Prepara i dati per l'inserimento
     const dataToInsert = {
-        job: job,
-        country: country,
-        context: context,
-        role: role,
-        scenario: scenario,
+        job,
+        country,
+        context,
+        role,
+        scenario,
         final_score: finalScore,
         created_at: timestamp
     };
     
-    // Aggiunge le skills per ogni categoria
     Object.keys(allSkills).forEach(category => {
         dataToInsert[category.toLowerCase().replace('/', '_')] = (selectedSkills[category] || []).join(', ');
     });
 
     try {
         const { data, error } = await supabase
-            .from('game_sessions') // Sostituisci 'game_sessions' con il nome della tua tabella
+            .from('game_sessions')
             .insert([dataToInsert]);
 
         if (error) {
@@ -68,6 +68,12 @@ app.post('/updatechart', async (req, res) => {
         res.status(500).json({ success: false, message: 'Errore interno del server.' });
     }
 });
+
+// Endpoint per controllare il file CSV (rimosso il codice CSV, ora solo una risposta di successo)
+app.get('/csvloading', (req, res) => {
+    res.json({ success: true, message: 'Connessione server ok.' });
+});
+
 
 app.listen(port, () => {
     console.log(`Server in ascolto sulla porta ${port}`);
