@@ -22,7 +22,7 @@ const allSkills = {
 };
 
 // Middleware per analizzare il corpo delle richieste JSON
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Servire il file HTML e altri file statici
 app.use(express.static(__dirname));
