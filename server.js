@@ -1,13 +1,16 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const path = require('path');
+const bodyParser = require = require('body-parser');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const filePath = path.join(__dirname, 'risultati.csv');
 
-// Dati delle categorie di skill, necessari per creare l'intestazione
+// Configurazione Supabase - Sostituisci con le tue credenziali
+const supabaseUrl = process.env.SUPABASE_URL || 'https://wioipjehjipybmwdzfvt.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indpb2lwamVoamlweWJtd2R6ZnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODA5MzAsImV4cCI6MjA3NDk1NjkzMH0.hwGXmF2KMAIHU6n6fQV8XaghKZD6kU_uA4smRFvRhhg';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Dati delle categorie di skill, necessari per formattare i dati
 const allSkills = {
     "Personal/Soft": ["Meet commitments", "Adapting to changing situations", "Physical strenght", "Managing stressful or challenging conditions", "Observation skills", "Manual Dexterity", "Responsiveness"],
     "Management": ["Monitoring warehouse security procedures", "Monitoring workers' safety on the production floor", "Safety checking", "Risk assessment", "Supervising staff", "Team management", "Conflict resolution", "Task/Production planning"],
@@ -21,63 +24,51 @@ const allSkills = {
 // Middleware per analizzare il corpo delle richieste JSON
 app.use(bodyParser.json());
 
-// Funzione per controllare e creare il file CSV con intestazione per categorie
-function checkOrCreateCSV() {
-    const skillCategories = Object.keys(allSkills);
-    const header = `Timestamp;Job;Country;Context;Role;Scenario;Final Score;${skillCategories.join(';')}\n`;
+// Servire il file HTML e altri file statici
+app.use(express.static(__dirname));
 
-    if (!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, header);
-        console.log('File risultati.csv creato con l\'intestazione per categorie.');
-    } else {
-        console.log('File risultati.csv trovato.');
-    }
-}
-
+// Aggiungi questa riga per servire game.html come pagina principale
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'game.html'));
 });
 
-// Servire gli altri file statici (CSS, JS, manifest, ecc.)
-app.use(express.static(path.join(__dirname)));
-
-// Endpoint per controllare il file CSV (richiamato al caricamento dell'app)
-app.get('/csvloading', (req, res) => {
-    checkOrCreateCSV();
-    res.json({ success: true, message: 'File CSV controllato e pronto.' });
-});
-
-// Endpoint per salvare i dati della sessione
-app.post('/updatechart', (req, res) => {
-    const { job, country, context, role, scenario, selectedSkills } = req.body;
+// Endpoint per salvare i dati della sessione su Supabase
+app.post('/updatechart', async (req, res) => {
+    const { job, country, context, role, scenario, selectedSkills, finalScore, timestamp } = req.body;
     
-    // Assicurati che 'finalScore' sia incluso nella destructurazione
-    const finalScore = req.body.finalScore;
-
-    if (!job || !country || !context || !role || !scenario || !finalScore) {
-        return res.status(400).json({ success: false, message: 'Dati mancanti.' });
-    }
+    // Prepara i dati per l'inserimento
+    const dataToInsert = {
+        job: job,
+        country: country,
+        context: context,
+        role: role,
+        scenario: scenario,
+        final_score: finalScore,
+        created_at: timestamp
+    };
     
-    // Formatta i dati per il CSV, con una cella per ogni categoria di skill
-    const skillCategories = Object.keys(allSkills);
-    const skillCells = skillCategories.map(category => {
-        const skillsInCat = selectedSkills[category] || [];
-        return `"${skillsInCat.join(', ')}"`;
-    }).join(';');
+    // Aggiunge le skills per ogni categoria
+    Object.keys(allSkills).forEach(category => {
+        dataToInsert[category.toLowerCase().replace('/', '_')] = (selectedSkills[category] || []).join(', ');
+    });
 
-    const row = `"${new Date().toISOString()}";"${job}";"${country}";"${context}";"${role}";"${scenario}";"${finalScore}";${skillCells}\n`;
+    try {
+        const { data, error } = await supabase
+            .from('game_sessions') // Sostituisci 'game_sessions' con il nome della tua tabella
+            .insert([dataToInsert]);
 
-    fs.appendFile(filePath, row, (err) => {
-        if (err) {
-            console.error('Errore nella scrittura del file:', err);
+        if (error) {
+            console.error('Errore durante il salvataggio su Supabase:', error);
             return res.status(500).json({ success: false, message: 'Errore interno del server.' });
         }
-        res.status(200).json({ success: true, message: 'Dati salvati con successo.' });
-    });
+
+        res.status(200).json({ success: true, message: 'Dati salvati con successo su Supabase.' });
+    } catch (e) {
+        console.error('Errore del server:', e);
+        res.status(500).json({ success: false, message: 'Errore interno del server.' });
+    }
 });
 
 app.listen(port, () => {
     console.log(`Server in ascolto sulla porta ${port}`);
-    console.log(`Apri http://localhost:${port} nel tuo browser per il test locale.`);
-    checkOrCreateCSV();
 });
