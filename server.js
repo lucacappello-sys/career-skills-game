@@ -35,9 +35,10 @@ app.use(express.static(__dirname));
 
 // Endpoint per salvare i dati della sessione su Supabase
 app.post('/updatechart', async (req, res) => {
-    const { job, country, context, role, scenario, selectedSkills, finalScore } = req.body;
+    const { job, country, context, role, scenario, selectedSkills, finalScore, timestamp } = req.body;
     
     const dataToInsert = {
+        Timestamp: timestamp, 
         Job: job,
         Country: country,
         Context: context,
