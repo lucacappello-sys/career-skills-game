@@ -49,7 +49,7 @@ app.post('/updatechart', async (req, res) => {
     };
     
     Object.keys(allSkills).forEach(category => {
-        dataToInsert[category.toLowerCase().replace('/', '_')] = (selectedSkills[category] || []).join(', ');
+        dataToInsert[category.replace('/', '_')] = (selectedSkills[category] || []).join(', ');
     });
 
     try {
