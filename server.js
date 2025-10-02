@@ -1,11 +1,10 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
+const bodyParser = require('body-parser');
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const filePath = path.join(__dirname, 'risultati.csv');
 
 // Configurazione Supabase - Sostituisci con le tue credenziali
 const supabaseUrl = process.env.SUPABASE_URL || 'https://wioipjehjipybmwdzfvt.supabase.co';
@@ -23,10 +22,10 @@ const allSkills = {
     "Operational": ["Procedures knowledge of error situation", "Task knowledge", "Time Management", "Coping with pressure", "Situational awareness", "Fast task execution", "Procedure Knowledge", "Handling unexpected events and emergencies"]
 };
 
-// Middleware per analizzare il corpo delle richieste JSON - Ora usiamo express
+// Middleware per analizzare il corpo delle richieste JSON
 app.use(express.json());
 
-// Servire il file HTML come pagina principale
+// Aggiungi questa riga per servire game.html come pagina principale
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'game.html'));
 });
@@ -36,21 +35,25 @@ app.use(express.static(__dirname));
 
 // Endpoint per salvare i dati della sessione su Supabase
 app.post('/updatechart', async (req, res) => {
-    const { job, country, context, role, scenario, selectedSkills, finalScore, timestamp } = req.body;
+    const { job, country, context, role, scenario, selectedSkills, finalScore } = req.body;
     
     const dataToInsert = {
-        job,
-        country,
-        context,
-        role,
-        scenario,
-        final_score: finalScore,
-        created_at: timestamp
+        Job: job,
+        Country: country,
+        Context: context,
+        Role: role,
+        Scenario: scenario,
+        "Final Score": finalScore
     };
     
-    Object.keys(allSkills).forEach(category => {
-        dataToInsert[category.replace('/', '_')] = (selectedSkills[category] || []).join(', ');
-    });
+    // Assegna le skill usando i nomi esatti delle colonne
+    dataToInsert["Personal/Soft"] = (selectedSkills["Personal/Soft"] || []).join(', ');
+    dataToInsert["Management"] = (selectedSkills["Management"] || []).join(', ');
+    dataToInsert["Collab/Comm"] = (selectedSkills["Collab/Comm"] || []).join(', ');
+    dataToInsert["Interaction/UX"] = (selectedSkills["Interaction/UX"] || []).join(', ');
+    dataToInsert["Analytical"] = (selectedSkills["Analytical"] || []).join(', ');
+    dataToInsert["Technical"] = (selectedSkills["Technical"] || []).join(', ');
+    dataToInsert["Operational"] = (selectedSkills["Operational"] || []).join(', ');
 
     try {
         const { data, error } = await supabase
@@ -68,12 +71,6 @@ app.post('/updatechart', async (req, res) => {
         res.status(500).json({ success: false, message: 'Errore interno del server.' });
     }
 });
-
-// Endpoint per controllare il file CSV (rimosso il codice CSV, ora solo una risposta di successo)
-app.get('/csvloading', (req, res) => {
-    res.json({ success: true, message: 'Connessione server ok.' });
-});
-
 
 app.listen(port, () => {
     console.log(`Server in ascolto sulla porta ${port}`);
