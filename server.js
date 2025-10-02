@@ -28,7 +28,7 @@ app.use(express.json());
 
 // Servire il file HTML come pagina principale
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'game.html'));
 });
 
 // Servire gli altri file statici
