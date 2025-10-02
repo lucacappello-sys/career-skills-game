@@ -8,8 +8,8 @@ const port = process.env.PORT || 3000;
 const filePath = path.join(__dirname, 'risultati.csv');
 
 // Configurazione Supabase - Sostituisci con le tue credenziali
-const supabaseUrl = process.env.SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const supabaseKey = process.env.SUPABASE_KEY || 'YOUR_SUPABASE_KEY';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://wioipjehjipybmwdzfvt.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indpb2lwamVoamlweWJtd2R6ZnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODA5MzAsImV4cCI6MjA3NDk1NjkzMH0.hwGXmF2KMAIHU6n6fQV8XaghKZD6kU_uA4smRFvRhhg';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Dati delle categorie di skill, necessari per formattare i dati
