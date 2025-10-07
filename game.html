@@ -258,11 +258,18 @@
             font-weight: 700;
         }
 
+
+        /* Regola di default per tutte le altre categorie (2 colonne) */
         .skills-list {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr); 
             gap: 15px 30px;
             text-align: left;
+        }
+
+        /* NUOVA REGOLA: Forziamo 3 colonne solo quando questa classe è attiva */
+        .skills-list.three-columns {
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .skills-list label {
@@ -754,6 +761,13 @@
             document.getElementById('skills-category-title').textContent = categoryName;
             const skillsListDiv = document.querySelector('#skills-form .skills-list');
             skillsListDiv.innerHTML = '';
+
+            // LOGICA DI CONTROLLO DELLE COLONNE
+            if (categoryName === 'Technical') {
+                skillsListDiv.classList.add('three-columns');
+            } else {
+                skillsListDiv.classList.remove('three-columns');
+            }
 
             skills.forEach(skill => {
                 const label = document.createElement('label');
