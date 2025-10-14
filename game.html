@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Skills Transformation Map</title>
-  
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -103,7 +103,7 @@
     .card--readonly{ pointer-events:none; cursor:default }
     .card__label{ position:absolute; top:10px; left:10px; font-size:12px; font-weight:600; opacity:.95 }
     .card__content{ width:100%; height:100%; display:flex; flex-direction:column; align-items:center; text-align:center }
-    .card__image{ width:100%; height: clamp(120px, 22vh, 160px); background:#fff; border-radius:14px; box-shadow: inset 0 0 0 1px #eaeaea; margin-bottom:16px; display:grid; place-items:center; color:#94a3b8; font-size:12px; flex:0 0 auto; }
+    .card__image{ width:100%; height: clamp(120px, 22vh, 160px); background:#fff; border-radius:14px; box-shadow: inset 0 0 0 1px #eaeaea; margin-bottom:16px; display:grid; place-items:center; color:#94a3b8; font-size:12px; flex:0 0 auto; object-fit:contain; }
     .card__title{ margin:4px 0 8px; font-size:20px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; text-align:center; flex:0 0 auto; }
     .card__desc{
       margin:0; font-size:13px; line-height:1.5; opacity:.95; text-align:center;
@@ -163,10 +163,10 @@
     .cat-bar{ flex:1; min-width:160px; height:16px; background:#e2e8f0; border-radius:999px; overflow:hidden; position:relative; box-shadow: inset 0 1px 2px rgba(0,0,0,.06); }
     .cat-bar > span{ display:block; height:100%; width:0%; border-radius:999px; transition:width .5s ease; }
     .cat-pct{ width:48px; text-align:right; font-weight:800; font-size:13px; color:#0f172a }
-    .results-left{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; align-items:end; }
+    .results-left{ display:grid; grid-template-columns: 1 / span 2; grid-template-columns: 1fr 1fr; gap:16px; align-items:end; }
     .final-score{ grid-column: 1 / span 2; font-weight:800; font-size:18px; padding:10px 14px; border-radius:12px; background:#ecfdf5; color:#065f46; border:1px solid #bbf7d0; text-align:center; }
 
-    /* ====== Info & Save (shell come immagine) ====== */
+    /* ====== Info & Save ====== */
     .info-shell{
       width:min(760px, 92%);
       background:#eaf3ff;
@@ -214,7 +214,7 @@
             <article class="card" data-group="role" data-value="Operator" style="--card-bg: var(--role-operator)" onclick="handleSelect(this)">
               <span class="card__label">Role 1</span>
               <div class="card__content">
-                <img src="Smart operator.png" class="card__image" style="object-fit: inherit;">
+                <img src="Smart operator.png" class="card__image" alt="Smart Line Operator">
                 <h3 class="card__title">SMART LINE OPERATOR</h3>
                 <p class="card__desc">Works alongside robots in shared areas, supervises their operations, and performs basic troubleshooting. As robots handle the most manual and repetitive tasks, this role requires broader skills than before, especially technical, analytical, and collaboration skills.</p>
               </div>
@@ -222,7 +222,7 @@
             <article class="card" data-group="role" data-value="Supervisor" style="--card-bg: var(--role-supervisor)" onclick="handleSelect(this)">
               <span class="card__label">Role 2</span>
               <div class="card__content">
-                  <img src="Plant.png" class="card__image" style="object-fit: inherit;">
+                <img src="Plant.png" class="card__image" alt="Plant Flow-Keeper">
                 <h3 class="card__title">PLANT FLOW-KEEPER</h3>
                 <p class="card__desc">Manages and coordinates the team and work area, supervises production flows, supports operators and robots and ensures process efficiency. The role combines strong management, technical, operational, and analytical skulls to plan activities, resolve medium-level issues, and maintain smooth and safe production operations.</p>
               </div>
@@ -230,7 +230,7 @@
             <article class="card" data-group="role" data-value="Maintenance technician" style="--card-bg: var(--role-tech)" onclick="handleSelect(this)">
               <span class="card__label">Role 3</span>
               <div class="card__content">
-                <img src="Tech.png" class="card__image" style="object-fit: inherit;">
+                <img src="Tech.png" class="card__image" alt="Tech Solver">
                 <h3 class="card__title">TECH SOLVER</h3>
                 <p class="card__desc">Acts as the reference for programming robots, configuring systems to optimise production processes, performing maintenance, and solving technical issues. Requires strong technical skills on new programming codes and solid analytical skills.</p>
               </div>
@@ -250,7 +250,7 @@
             <article class="card" data-group="sector" data-value="Food Sector" style="--card-bg: var(--sect-1)" onclick="handleSelect(this)">
               <span class="card__label">Sector 1</span>
               <div class="card__content">
-                <img src="Food.png" class="card__image" style="object-fit: inherit;">
+                <img src="Food.png" class="card__image" alt="Food Sector">
                 <h3 class="card__title">FOOD SECTOR</h3>
                 <p class="card__desc">In the food sector, products are received directly from the field in various-sized boxes and bins. These items need to be sorted gently based on dimensions, and then packed to meet market requirements. The new Industry 5.0 technologies enable automated sorting and packing by using new gripping concepts, increasing efficiency and ensuring product quality.</p>
               </div>
@@ -258,7 +258,7 @@
             <article class="card" data-group="sector" data-value="Automotive Sector" style="--card-bg: var(--sect-2)" onclick="handleSelect(this)">
               <span class="card__label">Sector 2</span>
               <div class="card__content">
-                <img src="Automotive.png" class="card__image" style="object-fit: inherit;">
+                <img src="Automotive.png" class="card__image" alt="Automotive Sector">
                 <h3 class="card__title">AUTOMOTIVE SECTOR</h3>
                 <p class="card__desc">In the automotive sector, common activities include order preparation for part delivery, kitting, and assembly. Robotics technologies aim to enhance productivity by performing tasks like sorting, identifying, and packing parts for shipment, while also reducing errors.</p>
               </div>
@@ -266,7 +266,7 @@
             <article class="card" data-group="sector" data-value="Logistic Sector" style="--card-bg: var(--sect-3)" onclick="handleSelect(this)">
               <span class="card__label">Sector 3</span>
               <div class="card__content">
-                <img src="Logistic.png" class="card__image" style="object-fit: inherit;">
+                <img src="Logistic.png" class="card__image" alt="Logistic Sector">
                 <h3 class="card__title">LOGISTIC SECTOR</h3>
                 <p class="card__desc">The logistics sector deals with a challenging variety of products. The new Industry 5.0 technologies aim at streamlining the order preparation process and stock management by using AI-enhanced robots, capable of handling diverse product characteristics.</p>
               </div>
@@ -303,7 +303,7 @@
         </div>
       </section>
 
-      <!-- SKILLS (tutte le categorie) -->
+      <!-- SKILLS -->
       <section id="skills-personal" class="page">
         <header class="section-head banner">
           <h2>Select skills:</h2>
@@ -454,7 +454,8 @@
         <div class="page-body">
           <div class="info-shell">
             <h3>Tell us about you!</h3>
-            <form class="info-form" onsubmit="event.preventDefault(); closeAndRestart();">
+            <!-- QUI: submit -> saveDataAndReset -->
+            <form class="info-form" onsubmit="event.preventDefault(); saveDataAndReset();">
               <div>
                 <label for="job-final">Your job *</label>
                 <input type="text" id="job-final" required placeholder="Input">
@@ -490,7 +491,7 @@
       'loading','results','info-save'
     ];
 
-    /* Scelte UI (usate sia per render che per l'indice skill→categoria) */
+    /* Scelte UI (anche indice skill→categoria) */
     const allSkillsUI = {
       "Personal/Soft": ["Responsiveness","Adapting to changing situations","Manual Dexterity","Meet commitments","Observation skills","Managing stressful or challenging conditions","Physical strenght"],
       "Management": ["Task/Production planning","Safety checking","Conflict resolution","Team management","Supervising staff","Risk assessment","Monitoring workers' safety on the production floor","Monitoring warehouse security procedures"],
@@ -584,7 +585,7 @@
       document.querySelectorAll('.skills-subtitle').forEach(el=>el.textContent=text);
     }
 
-    /* ---------- Normalizzazione e alias (per match robusto) ---------- */
+    /* ---------- Normalizzazione & alias ---------- */
     const aliasMap = new Map([
       ['digital systems usage','digital system usage'],
       ['problem / alert management','problem/alert management'],
@@ -593,8 +594,8 @@
       ['collaborate with robotic systems in shared workspaces','collaborating with robots in shared spaces'],
       ['digital system/machine/robot automatic reports understanding','system/machine reports understanding'],
       ['alert management','problem/alert management'],
-      ['decision making','decision making'], // noop
-      ['problem identification',' problem identification'] // allineamento spaziatura
+      ['decision making','decision making'],
+      ['problem identification',' problem identification']
     ]);
     function normBase(t){ return String(t||'').toLowerCase().normalize('NFKD').replace(/\s*\/\s*/g,'/').replace(/\s*-\s*/g,'-').replace(/[()]/g,'').replace(/\s+/g,' ').trim(); }
     function singularizeSimple(s){ return s.replace(/\b(\w{4,})s\b/g,'$1'); }
@@ -656,23 +657,14 @@
       const map=correctSkillsData[ctx]||{}; return map[role]||[];
     }
 
-    // Ritorna, per una categoria, {pct, userCorrectCount, totalCorrectInCat}
+    // Per categoria: {pct, userCorrectCount, totalCorrectInCat}
     function categoryPercentage(catName, correctListRaw){
-      // 1) Normalizza e deduplica le skill corrette dal dizionario (ruolo+settore)
       const correctList = uniq(correctListRaw);
-
-      // 2) Filtra SOLO quelle che appartengono alla categoria corrente (usando l'indice skill→categoria)
       const correctInCat = correctList.filter(s => skillToCategory.get(s) === catName);
       const denom = correctInCat.length;
-
-      // 3) Scelte utente in questa categoria (normalizzate)
       const userSelCanon = new Set(uniq(state.skills[catName] || []));
-
-      // 4) Numeratore: quante corrette di categoria l'utente ha selezionato
       let num = 0;
       for (const s of correctInCat){ if (userSelCanon.has(s)) num++; }
-
-      // 5) % arrotondata all’unità
       const pct = denom ? Math.round((num / denom) * 100) : 0;
       return { pct, userCorrectCount: num, totalCorrectInCat: denom };
     }
@@ -716,7 +708,55 @@
       document.getElementById('finalScoreBox').textContent=`Final score: ${finalPct}% correct answers`;
     }
 
-    /* Close: torna all’inizio e resetta stato/selezioni */
+    /* ---- Salvataggio su /updatechart e reset ---- */
+    async function saveDataAndReset(){
+      const job = document.getElementById('job-final')?.value?.trim();
+      const country = document.getElementById('country-final')?.value?.trim();
+      if(!job || !country){
+        alert("Per favore, inserisci tutte le informazioni richieste.");
+        return;
+      }
+
+      // finalScore come stringa leggibile (es. "Final score: 72% correct answers")
+      const finalScoreText = document.getElementById('finalScoreBox')?.textContent || '';
+
+      // selectedSkills nel formato { categoria: string[] }
+      const selectedSkills = {};
+      Object.keys(allSkillsUI).forEach(cat=>{
+        selectedSkills[cat] = Array.isArray(state.skills[cat]) ? [...state.skills[cat]] : [];
+      });
+
+      const payload = {
+        job,
+        country,
+        context: state.selections.sector || null,
+        role: state.selections.role || null,
+        scenario: state.selections.sector || null, // per compatibilità col tuo server
+        selectedSkills,
+        finalScore: finalScoreText,
+        timestamp: new Date().toISOString()
+      };
+
+      try{
+        const resp = await fetch('/updatechart', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await resp.json();
+        if(!resp.ok || !json.success){
+          console.error('Errore salvataggio:', json);
+          alert('Errore nel salvataggio dei dati.');
+          return;
+        }
+        // ok: reset e torna all’intro
+        startNewSession();
+      }catch(err){
+        console.error('Errore di comunicazione:', err);
+        alert('Si è verificato un errore di comunicazione con il server.');
+      }
+    }
+
     function resetState(){
       state.history = [];
       state.selections = { role:null, sector:null };
@@ -726,14 +766,15 @@
       updateBottomBar();
       renderDots();
     }
-    function closeAndRestart(){
-      // qui potresti leggere i due campi e salvarli su Supabase
+    function startNewSession(){
       resetState();
       go('intro');
     }
 
     /* Init */
-    window.go=go; window.goBack=goBack; window.handleSelect=handleSelect; window.onContinue=onContinue; window.closeAndRestart=closeAndRestart;
+    window.go=go; window.goBack=goBack; window.handleSelect=handleSelect; window.onContinue=onContinue;
+    window.saveDataAndReset = saveDataAndReset;
+
     document.addEventListener('DOMContentLoaded', ()=>{
       renderDots(); setActivePage('intro');
       document.getElementById('startBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); if(state.page) state.history.push(state.page); setActivePage('role-selection'); });
