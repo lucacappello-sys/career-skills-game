@@ -1,21 +1,21 @@
 {
-    "name": "Career Skills Game",
-    "short_name": "Skills Game",
-    "description": "Un gioco interattivo per esplorare carriere e skills.",
-    "start_url": "/game.html",
-    "display": "standalone",
-    "background_color": "#e9ecef",
-    "theme_color": "#ffffff",
-    "icons": [
-        {
-            "src": "icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icon-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
+    "name": "Skills Transformation Map",
+"short_name": "Skills Map",
+"description": "Un'applicazione interattiva per valutare le competenze e l'impatto di Industry 5.0.",
+"start_url": "/game.html",
+"display": "standalone",
+"background_color": "#f3f5f9",
+"theme_color": "#eaf3ff",
+"icons": [
+ {
+"src": "icon-192x192.png",
+"sizes": "192x192",
+"type": "image/png"
+ },
+ {
+"src": "icon-512x512.png",
+"sizes": "512x512",
+"type": "image/png"
+ }
+ ]
 }
