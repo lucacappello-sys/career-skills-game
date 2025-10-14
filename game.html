@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Skills Transformation Map</title>
-
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -738,6 +738,34 @@
       renderDots(); setActivePage('intro');
       document.getElementById('startBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); if(state.page) state.history.push(state.page); setActivePage('role-selection'); });
     });
+
+    function initializeApp() {
+             fetch('https://career-skills-game-1.onrender.com/csvloading')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore durante il controllo del file CSV:', error);
+                });
+            renderPage();
+        }
+
+        initializeApp();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('Service Worker registrato con successo:', registration);
+                }).catch(error => {
+                    console.log('Registrazione Service Worker fallita:', error);
+                });
+            });
+        }
+
+
   </script>
 </body>
 </html>
