@@ -20,7 +20,7 @@
       --bar-h: 64px;
 
       /* banner */
-      --banner-bg:#EAEFF6; --banner-stroke:#d6e6ff; --banner-h: 86px;
+      --banner-bg:#EAEFF6; --banner-stroke:#d6e6ff; --banner-h: 38px;
 
       /* respiro verticale */
       --vpad: clamp(16px, 3vh, 40px);
@@ -53,7 +53,7 @@
     .page{ display:none; width:100%; height:100%; position:relative; padding:0;}
     .page.active{ display:grid; align-content:center; align-items:center; }
     .fade{animation:fade .25s ease}
-    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    @keyframes fade{from{opacity:0;transform:translateY(0px)}to{opacity:1;transform:none}}
 
     /* ====== Banner/header ====== */
     .section-head.banner{
@@ -68,7 +68,7 @@
     /* ====== Area contenuto fra banner e bottom bar ====== */
     .page-body{
       position:relative;
-      --avail-h: calc(100vh - var(--banner-h) - var(--bar-h) - (var(--vpad) * 2));
+      --avail-h: calc(100vh - var(--banner-h) - var(--bar-h) );  /* - (var(--vpad) * 2)*/
       min-height: calc(100vh - var(--bar-h));
       width:100%;
       display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px;
@@ -174,15 +174,14 @@
       border-radius:16px;
       padding:28px 28px 24px;
       box-shadow:var(--shadow);
-      display:flex; flex-direction:column; align-items:center; gap:16px;
+      display:flex; flex-direction:column; align-items:center; gap: 20px;
       text-align:center;
     }
-    .info-shell h3{ margin:0 0 4px; font-size:22px; color:#233876 }
+    .info-shell h3{ margin:0 0 16px; font-size:22px; color:#233876 }
     .info-form{ width:100%; 
         max-width:420px; 
         display:flex; 
         flex-direction:column; 
-        gap:20px; /* Aumentiamo il gap per dare più spazio verticale tra i campi */
         align-items:center; /* Centra orizzontalmente i contenitori dei campi */
         padding: 0 10px; /* Aggiungi un po' di padding laterale se necessario */
     }
@@ -214,7 +213,7 @@
       <section id="role-selection" class="page">
         <header class="section-head banner">
           <h2>Choose the role:</h2>
-          <p>Select the role to interpret</p>
+          <p>Select the role you want to analyse.</p>
         </header>
         <div class="page-body">
           <div class="cards-wrap">
@@ -250,7 +249,7 @@
       <section id="context-selection" class="page">
         <header class="section-head banner">
           <h2>Choose the sector:</h2>
-          <p>Pick the industry sector where you want to work</p>
+          <p>Select the industry sector you want to refer to.</p>
         </header>
         <div class="page-body">
           <div class="cards-wrap">
@@ -454,15 +453,11 @@
 
       <!-- INFO & SAVE -->
       <section id="info-save" class="page">
-        <header class="section-head banner">
-          <h2>Save your results</h2>
-          <p>Fill in your information and save</p>
-        </header>
         <div class="page-body">
           <div class="info-shell">
             <h3>Tell us about you!</h3>
             <!-- QUI: submit -> saveDataAndReset -->
-            <form class="info-form" onsubmit="event.preventDefault(); saveDataAndReset();">
+            <form class="info-form" onsubmit="event.preventDefault(); saveDataAndRestart();">
               <div>
                 <label for="job-final">Job title / Role *</label>
                 <input type="text" id="job-final" required placeholder="Input">
@@ -475,7 +470,7 @@
                 <label for="country-final">Country where you work *</label>
                 <input type="text" id="country-final" required placeholder="Input">
               </div>
-              <button type="submit" class="close-btn">Close</button>
+              <button type="submit" class="close-btn">Save</button>
             </form>
           </div>
         </div>
@@ -492,378 +487,401 @@
     <button id="btn-continue" class="btn btn-primary" disabled onclick="onContinue()">Continue →</button>
   </div>
 
-  <script>
-    /* Sequenza */
-    const steps = [
-      'intro',
-      'role-selection','context-selection','review',
-      'skills-technical','skills-operational','skills-analytical','skills-collab',
-      'skills-management','skills-personal','skills-interaction',
-      'loading','results','info-save'
-    ];
+ <script>
+    /* Sequenza */
+    const steps = [
+      'intro',
+      'role-selection','context-selection','review',
+      'skills-technical','skills-operational','skills-analytical','skills-collab',
+      'skills-management','skills-personal','skills-interaction',
+      'loading','results','info-save'
+    ];
 
 
-    /* Scelte UI (anche indice skill→categoria) */
-    const allSkillsUI = {
-      "Personal/Soft": ["Responsiveness","Adapting to changing situations","Manual Dexterity","Meet commitments","Observation skills","Managing stressful or challenging conditions","Physical strenght"],
-      "Management": ["Task/Production planning","Safety checking","Conflict resolution","Team management","Supervising staff","Risk assessment","Monitoring workers' safety on the production floor","Monitoring warehouse security procedures"],
-      "Collab/Comm": ["Coordination with the robot work","Coordination across operators","System/Machine reports understanding","Provide feedback to AI systems","Understand AI-generated insights","Assisting others in complex situations","Avoid collision with AI","Assign and manage tasks","Revising algorithm's suggestion"],
-      "Interaction/UX": ["Use voice commands","Interact physically with cobots","Use of production monitoring dashboard","Respond to haptic feedback","Use gesture-based controls","Collaborating with robots in shared spaces","Use of touchscreen-based interface","Ure AR devices for real-time and visual guidance"],
-      "Analytical": ["Problem Solving","Data interpretation","Decision making","Making time-critical decisions","Risk assessment"," Problem identification","Predictive maintenance","Preventive maintenance"],
-      "Operational": ["Procedures knowledge of error situation","Task knowledge","Time Management","Coping with pressure","Situational awareness","Fast task execution","Procedure Knowledge","Handling unexpected events and emergencies"],
-      "Technical": ["Process awareness","Technical issues resolution","Digital system usage","Digital data management","System state interpretation","Technical inspection","Problem/Alert management","Algorithms output understanding","Quality assessment","Setting up the activity","Statistical process control","Understanding AI systems","Data processing","Knowledge of Machine/Robot task","Machine/Robot maintenance","Machine/Robot setting parameters","Turning on machines/robot","Use of the Robot controller","Understanding the Robot coding/language","Knowledge of robot mechanisms","Setting up the robot","Robot programming","Understand the robot feedback","Know how to interact with robots","Coding"]
-    };
+    /* Scelte UI (usate sia per render che per l'indice skill→categoria) */
+    const allSkillsUI = {
+      "Personal/Soft": ["Responsiveness","Adapting to changing situations","Manual Dexterity","Meet commitments","Observation skills","Managing stressful or challenging conditions","Physical strenght"],
+      "Management": ["Task/Production planning","Safety checking","Conflict resolution","Team management","Supervising staff","Risk assessment","Monitoring workers' safety on the production floor","Monitoring warehouse security procedures"],
+      "Collab/Comm": ["Coordination with the robot work","Coordination across operators","System/Machine reports understanding","Provide feedback to AI systems","Understand AI-generated insights","Assisting others in complex situations","Avoid collision with AI","Assign and manage tasks","Revising algorithm's suggestion"],
+      "Interaction/UX": ["Use voice commands","Interact physically with cobots","Use of production monitoring dashboard","Respond to haptic feedback","Use gesture-based controls","Collaborating with robots in shared spaces","Use of touchscreen-based interface","Ure AR devices for real-time and visual guidance"],
+      "Analytical": ["Problem Solving","Data interpretation","Decision making","Making time-critical decisions","Risk assessment"," Problem identification","Predictive maintenance","Preventive maintenance"],
+      "Operational": ["Procedures knowledge of error situation","Task knowledge","Time Management","Coping with pressure","Situational awareness","Fast task execution","Procedure Knowledge","Handling unexpected events and emergencies"],
+      "Technical": ["Process awareness","Technical issues resolution","Digital system usage","Digital data management","System state interpretation","Technical inspection","Problem/Alert management","Algorithms output understanding","Quality assessment","Setting up the activity","Statistical process control","Understanding AI systems","Data processing","Knowledge of Machine/Robot task","Machine/Robot maintenance","Machine/Robot setting parameters","Turning on machines/robot","Use of the Robot controller","Understanding the Robot coding/language","Knowledge of robot mechanisms","Setting up the robot","Robot programming","Understand the robot feedback","Know how to interact with robots","Coding"]
+    };
 
-    /* Dizionario correttezza unico (ruolo + settore) */
-    const correctSkillsData = {
-      "Automotive Sector": {
-        "Operator": ["Task knowledge","Procedures knowledge of error situation","Situational awareness","Use of the Robot controller","Process awareness","Understand the robot feedback","Know how to interact with robots","Technical issues resolution","Knowledge of Machine/Robot task","Coordination with the robot work","Collaborate with robotic systems in shared workspaces"],
-        "Supervisor": ["Know how to interact with robots","Use of the Robot controller","Understand the robot feedback","Handling unexpected events and emergencies","Coordination across operators","Conflict resolution","Team management","Supervising staff","Monitoring security procedures in warehouse operations"],
-        "Maintenance technician": ["Knowledge of robot mechanisms","Robot programming","Know how to interact with robots","Use of the Robot controller","Understand the robot feedback","Technical issues resolution","Technical inspection","Interact physically with cobots","Problem identification"]
-      },
-      "Food Sector": {
-        "Operator": ["System state interpretation","Turning on machines/robot","Setting up the robot","Problem / Alert management","Quality assessment","Use of the Robot controller","Understand the robot feedback","Process awareness","Digital systems usage","Know how to interact with robots","Coordination with the robot work","Situational awareness","Task knowledge","Procedures knowledge","Procedures knowledge of error situation","Production monitoring","Collaborate with robotic systems in shared workspaces"],
-        "Supervisor": ["Task/Production planning","Safety checking","Setting up the activity","Machine/Robot setting parameters","Digital systems usage","Risk assessment","Problem identification","Task knowledge","Handling unexpected events and emergencies"],
-        "Maintenance technician": ["Technical inspection","Use of the robot controller","Data interpretation","Knowledge of robot mechanisms","Know how to interact with robots","Robot programming","Technical issues resolution","Understand the robot feedback","Problem identification"]
-      },
-      "Logistic Sector": {
-        "Operator": ["Task knowledge","Procedures knowledge of error situation","Use of the Robot controller","Problem / Alert management","Setting up the activity","System state interpretation","Machine/robot setting parameters","Process awareness","Know how to interact with robots","Task/Production planning","Safety checking","Decision making","Problem solving","Problem identification","Data interpretation","Coordination with the robot work"],
-        "Supervisor": ["Task/Production planning","Alert management","Safety checking","Data interpretation","Decision Making"],
-        "Maintenance technician": ["Predictive maintenance","Data interpretation","Use of the Robot controller","Setting up the robot","Machine/robot setting parameters","Understanding the Robot coding/language","Technical inspection","Algorithms output understanding","Knowledge of robot mechanisms","Digital System/Machine/Robot automatic reports understanding","Alert management","Safety checking","Interact physically with cobots","Understand the robot feedback"]
-      }
-    };
+    /* Dizionario correttezza unico (ruolo + settore) */
+    const correctSkillsData = {
+      "Automotive Sector": {
+        "Operator": ["Task knowledge","Procedures knowledge of error situation","Situational awareness","Use of the Robot controller","Process awareness","Understand the robot feedback","Know how to interact with robots","Technical issues resolution","Knowledge of Machine/Robot task","Coordination with the robot work","Collaborate with robotic systems in shared workspaces"],
+        "Supervisor": ["Know how to interact with robots","Use of the Robot controller","Understand the robot feedback","Handling unexpected events and emergencies","Coordination across operators","Conflict resolution","Team management","Supervising staff","Monitoring security procedures in warehouse operations"],
+        "Maintenance technician": ["Knowledge of robot mechanisms","Robot programming","Know how to interact with robots","Use of the Robot controller","Understand the robot feedback","Technical issues resolution","Technical inspection","Interact physically with cobots","Problem identification"]
+      },
+      "Food Sector": {
+        "Operator": ["System state interpretation","Turning on machines/robot","Setting up the robot","Problem / Alert management","Quality assessment","Use of the Robot controller","Understand the robot feedback","Process awareness","Digital systems usage","Know how to interact with robots","Coordination with the robot work","Situational awareness","Task knowledge","Procedures knowledge","Procedures knowledge of error situation","Production monitoring","Collaborate with robotic systems in shared workspaces"],
+        "Supervisor": ["Task/Production planning","Safety checking","Setting up the activity","Machine/Robot setting parameters","Digital systems usage","Risk assessment","Problem identification","Task knowledge","Handling unexpected events and emergencies"],
+        "Maintenance technician": ["Technical inspection","Use of the robot controller","Data interpretation","Knowledge of robot mechanisms","Know how to interact with robots","Robot programming","Technical issues resolution","Understand the robot feedback","Problem identification"]
+      },
+      "Logistic Sector": {
+        "Operator": ["Task knowledge","Procedures knowledge of error situation","Use of the Robot controller","Problem / Alert management","Setting up the activity","System state interpretation","Machine/robot setting parameters","Process awareness","Know how to interact with robots","Task/Production planning","Safety checking","Decision making","Problem solving","Problem identification","Data interpretation","Coordination with the robot work"],
+        "Supervisor": ["Task/Production planning","Alert management","Safety checking","Data interpretation","Decision Making"],
+        "Maintenance technician": ["Predictive maintenance","Data interpretation","Use of the Robot controller","Setting up the robot","Machine/robot setting parameters","Understanding the Robot coding/language","Technical inspection","Algorithms output understanding","Knowledge of robot mechanisms","Digital System/Machine/Robot automatic reports understanding","Alert management","Safety checking","Interact physically with cobots","Understand the robot feedback"]
+      }
+    };
 
-    const state = { page:'intro', history:[], selections:{ role:null, sector:null }, snapshots:{ role:null, sector:null }, skills:{} };
+    const state = { page:'intro', history:[], selections:{ role:null, sector:null }, snapshots:{ role:null, sector:null }, skills:{} };
 
-    /* Dots slider */
-    function renderDots(){ const wrap=document.getElementById('dots'); wrap.innerHTML=''; steps.forEach(()=>{ const d=document.createElement('span'); d.className='dot'; wrap.appendChild(d); }); }
-    function updateDots(){ const dots=document.querySelectorAll('#dots .dot'); const idx=steps.indexOf(state.page); dots.forEach((d,i)=>d.classList.toggle('active', i===idx)); }
+    /* Dots slider */
+    function renderDots(){ const wrap=document.getElementById('dots'); wrap.innerHTML=''; steps.forEach(()=>{ const d=document.createElement('span'); d.className='dot'; wrap.appendChild(d); }); }
+    function updateDots(){ const dots=document.querySelectorAll('#dots .dot'); const idx=steps.indexOf(state.page); dots.forEach((d,i)=>d.classList.toggle('active', i===idx)); }
 
-    /* Navigazione */
-    function setActivePage(id){
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active','fade'));
-      document.getElementById(id)?.classList.add('active','fade');
-      state.page = id; 
-      updateDots(); 
-      updateBottomBar();
+    /* Navigazione */
+    function setActivePage(id){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active','fade'));
+      document.getElementById(id)?.classList.add('active','fade');
+      state.page = id; 
+      updateDots(); 
+      updateBottomBar();
 
-      if(id === 'review') hydrateReview();
+      if(id === 'review') hydrateReview();
 
-      if(id.startsWith('skills')) {
-        updateSkillsSubtitle();   // <— forza aggiornamento testo
-        mountSkills();            // <— monta SOLO la pagina corrente
-      }
-      if(id === 'loading') startLoading();
-      if(id === 'results') renderResults();
+      // AGGIUNTO: Chiama l'aggiornamento per le pagine skills
+      if(id.startsWith('skills')) { 
+        updateSkillsSubtitle(); 
+        mountSkills(); 
+      }
+      if(id === 'loading') startLoading();
+      if(id === 'results') renderResults();
+    }
+    function go(id){ 
+        if(state.page && state.page !== id && state.page.startsWith('skills')) saveSkills();
+        if(state.page) state.history.push(state.page); 
+        setActivePage(id); 
+    }
+    function goBack(){ 
+        if(state.history.length){ 
+            if(state.page.startsWith('skills')) saveSkills();
+            const prev=state.history.pop(); 
+            setActivePage(prev); 
+        } else { 
+            setActivePage('intro'); 
+        } 
     }
 
-    function go(id){ if(state.page) state.history.push(state.page); setActivePage(id); }
-    function goBack(){ if(state.history.length){ const prev=state.history.pop(); setActivePage(prev); } else { setActivePage('intro'); } }
+    function updateBottomBar(){
+      const bar=document.querySelector('.bottombar');
+      const backBtn=document.getElementById('btn-back');
+      const contBtn=document.getElementById('btn-continue');
+      const showBar = (state.page !== 'intro' && state.page !== 'loading');
+      bar.style.display = showBar ? 'flex' : 'none';
+      document.body.classList.toggle('with-bar', showBar);
+      const showBack = steps.indexOf(state.page) >= steps.indexOf('role-selection') && state.page !== 'loading';
+      backBtn.style.display = showBack ? 'inline-flex' : 'none';
+      
+      // Update Continue button logic based on current page
+      if(state.page==='role-selection'){
+            contBtn.disabled = !state.selections.role;
+            contBtn.id = 'btn-continue-role';
+        } else if(state.page==='context-selection'){
+            contBtn.disabled = !state.selections.sector;
+            contBtn.id = 'btn-continue-sector';
+        } else if (state.page.startsWith('skills')) {
+            contBtn.disabled = false; // Skills pages automatically save on continue
+            contBtn.id = `btn-continue-${state.page.split('-')[1]}`;
+        } else if (state.page === 'review') {
+            contBtn.disabled = false;
+            contBtn.id = 'btn-continue-review';
+        } else if (state.page === 'results') {
+            contBtn.disabled = false;
+            contBtn.id = 'btn-continue-results';
+        } else {
+            contBtn.disabled = false;
+            contBtn.id = 'btn-continue';
+        }
+    }
 
-    function updateBottomBar(){
-      const bar=document.querySelector('.bottombar');
-      const backBtn=document.getElementById('btn-back');
-      const contBtn=document.getElementById('btn-continue');
-      const showBar = (state.page !== 'intro' && state.page !== 'loading');
-      bar.style.display = showBar ? 'flex' : 'none';
-      document.body.classList.toggle('with-bar', showBar);
-      const showBack = steps.indexOf(state.page) >= steps.indexOf('role-selection') && state.page !== 'loading';
-      backBtn.style.display = showBack ? 'inline-flex' : 'none';
-      if(state.page==='role-selection') contBtn.disabled = !state.selections.role;
-      else if(state.page==='context-selection') contBtn.disabled = !state.selections.sector;
-      else contBtn.disabled = false;
-    }
+    function handleSelect(cardEl){
+      const group=cardEl.dataset.group; const value=cardEl.dataset.value;
+      document.querySelectorAll(`.card[data-group="${group}"]`).forEach(c=>c.classList.remove('card--selected'));
+      cardEl.classList.add('card--selected');
+      state.selections[group]=value;
+      const style=getComputedStyle(cardEl);
+      const color=style.getPropertyValue('--card-bg') || style.backgroundColor;
+      const title=cardEl.querySelector('.card__title')?.textContent?.trim() || '';
+      const desc =cardEl.querySelector('.card__desc')?.textContent?.trim() || '';
+      
+      // AGGIUNTO: Ottieni l'URL dell'immagine/nome del file dalla card
+      const imgEl = cardEl.querySelector('.card__content > img');
+      const img = imgEl ? imgEl.getAttribute('src') : '';
+      
+      state.snapshots[group]={ title, desc, color: color.trim(), img };
+      updateBottomBar(); updateSkillsSubtitle();
+    }
 
-    function handleSelect(cardEl){
-      const group=cardEl.dataset.group; 
-      const value=cardEl.dataset.value;
-
-      document.querySelectorAll(`.card[data-group="${group}"]`)
-        .forEach(c=>c.classList.remove('card--selected'));
-      cardEl.classList.add('card--selected');
-
-      state.selections[group]=value;
-
-      const style=getComputedStyle(cardEl);
-      const color=style.getPropertyValue('--card-bg') || style.backgroundColor;
-      const title=cardEl.querySelector('.card__title')?.textContent?.trim() || '';
-      const desc =cardEl.querySelector('.card__desc')?.textContent?.trim() || '';
-      const img  =cardEl.querySelector('img.card__image')?.getAttribute('src') || '';
-
-      state.snapshots[group]={ title, desc, color: color.trim(), img };
-      updateBottomBar(); 
-      updateSkillsSubtitle();
-    }
-
-    function hydrateReview(){
-      const r=state.snapshots.role||{}; 
-      const s=state.snapshots.sector||{};
-
-      const rCard=document.getElementById('review-role'); 
-      const sCard=document.getElementById('review-sector');
-
-      rCard.style.setProperty('--card-bg', r.color||'#888'); 
-      sCard.style.setProperty('--card-bg', s.color||'#888');
-
-      document.getElementById('review-role-title').textContent=r.title||'—';
-      document.getElementById('review-role-desc').textContent=r.desc||'—';
-      document.getElementById('review-sector-title').textContent=s.title||'—';
-      document.getElementById('review-sector-desc').textContent=s.desc||'—';
-
-      // --- immagini (ruolo) ---
-      const rImgHolder = rCard.querySelector('.card__image');
-      if (rImgHolder){
-        rImgHolder.textContent = ''; // rimuovi la scritta "image"
-        rImgHolder.style.backgroundColor = '#fff';
-        rImgHolder.style.backgroundImage  = r.img ? `url("${r.img}")` : 'none';
-        rImgHolder.style.backgroundRepeat = 'no-repeat';
-        rImgHolder.style.backgroundPosition = 'center';
-      }
-
-      // --- immagini (settore) ---
-      const sImgHolder = sCard.querySelector('.card__image');
-      if (sImgHolder){
-        sImgHolder.textContent = '';
-        sImgHolder.style.backgroundColor = '#fff';
-        sImgHolder.style.backgroundImage  = s.img ? `url("${s.img}")` : 'none';
-        sImgHolder.style.backgroundRepeat = 'no-repeat';
-        sImgHolder.style.backgroundPosition = 'center';
-        sImgHolder.style.backgroundSize = 'fill';
+    function hydrateReview(){
+      const r=state.snapshots.role||{}; const s=state.snapshots.sector||{};
+      const rCard=document.getElementById('review-role'); const sCard=document.getElementById('review-sector');
+      
+      rCard.style.setProperty('--card-bg', r.color||'#888'); 
+      sCard.style.setProperty('--card-bg', s.color||'#888');
+      
+      document.getElementById('review-role-title').textContent=r.title||'—';
+      document.getElementById('review-role-desc').textContent=r.desc||'—';
+      document.getElementById('review-sector-title').textContent=s.title||'—';
+      document.getElementById('review-sector-desc').textContent=s.desc||'—';
         
-      }
-    }
+      // AGGIUNTO: Aggiorna le immagini nelle card di Review (MODIFICA QUI)
+      const rImgHolder = rCard.querySelector('.card__image');
+      rImgHolder.innerHTML = r.img ? `<img src="${r.img}" alt="${r.title} image">` : '';
 
-    /* ---------- Normalizzazione & alias ---------- */
-    const aliasMap = new Map([
-      ['digital systems usage','digital system usage'],
-      ['problem / alert management','problem/alert management'],
-      ['production monitoring','use of production monitoring dashboard'],
-      ['monitoring security procedures in warehouse operations','monitoring warehouse security procedures'],
-      ['collaborate with robotic systems in shared workspaces','collaborating with robots in shared spaces'],
-      ['digital system/machine/robot automatic reports understanding','system/machine reports understanding'],
-      ['alert management','problem/alert management'],
-      ['decision making','decision making'],
-      ['problem identification',' problem identification']
-    ]);
-    function normBase(t){ return String(t||'').toLowerCase().normalize('NFKD').replace(/\s*\/\s*/g,'/').replace(/\s*-\s*/g,'-').replace(/[()]/g,'').replace(/\s+/g,' ').trim(); }
-    function singularizeSimple(s){ return s.replace(/\b(\w{4,})s\b/g,'$1'); }
-    function canon(t){ let x=singularizeSimple(normBase(t)); if(aliasMap.has(x)) x=aliasMap.get(x); return x; }
-    const uniq = arr => Array.from(new Set(arr.map(canon)));
+      const sImgHolder = sCard.querySelector('.card__image');
+      sImgHolder.innerHTML = s.img ? `<img src="${s.img}" alt="${s.title} image">` : '';
+    }
 
-    /* ---------- Indice skill → categoria (derivato da allSkillsUI) ---------- */
-    const skillToCategory = (() => {
-      const map = new Map();
-      for (const [cat, arr] of Object.entries(allSkillsUI)){
-        for (const label of arr){
-          map.set(canon(label), cat);
-        }
-      }
-      return map;
-    })();
+    function getChosenRoleTitle(){ return (state.snapshots.role && state.snapshots.role.title) || state.selections.role || 'the role'; }
+    function getChosenSectorTitle(){ return (state.snapshots.sector && state.snapshots.sector.title) || state.selections.sector || 'the sector'; }
+    
+    // FUNZIONE AGGIORNATA
+    function updateSkillsSubtitle(){
+      const role=getChosenRoleTitle(); 
+      const sect=getChosenSectorTitle();
+      const text=`Choose different skills that allow ${role} to work in ${sect}`;
+      document.querySelectorAll('.skills-subtitle').forEach(el=>el.textContent=text);
+    }
 
-    /* Monta skill list preservando selezioni */
-    function mountSkills(){
-      const pageRoot = document.getElementById(state.page);
-      if(!pageRoot) return;
+    /* ---------- Normalizzazione e alias (per match robusto) ---------- */
+    const aliasMap = new Map([
+      ['digital systems usage','digital system usage'],
+      ['problem / alert management','problem/alert management'],
+      ['production monitoring','use of production monitoring dashboard'],
+      ['monitoring security procedures in warehouse operations','monitoring warehouse security procedures'],
+      ['collaborate with robotic systems in shared workspaces','collaborating with robots in shared spaces'],
+      ['digital system/machine/robot automatic reports understanding','system/machine reports understanding'],
+      ['alert management','problem/alert management'],
+      ['decision making','decision making'],
+      ['problem identification',' problem identification'] 
+    ]);
+    function normBase(t){ return String(t||'').toLowerCase().normalize('NFKD').replace(/\s*\/\s*/g,'/').replace(/\s*-\s*/g,'-').replace(/[()]/g,'').replace(/\s+/g,' ').trim(); }
+    function singularizeSimple(s){ return s.replace(/\b(\w{4,})s\b/g,'$1'); }
+    function canon(t){ let x=singularizeSimple(normBase(t)); if(aliasMap.has(x)) x=aliasMap.get(x); return x; }
+    const uniq = arr => Array.from(new Set(arr.map(canon)));
 
-      // trova solo le liste nella pagina corrente
-      pageRoot.querySelectorAll('[data-skilllist]').forEach(list=>{
-        const cat = list.getAttribute('data-skilllist');
-        const selected = new Set(state.skills[cat] || []);
-        const items = allSkillsUI[cat];
+    /* ---------- Indice skill → categoria (derivato da allSkillsUI) ---------- */
+    const skillToCategory = (() => {
+      const map = new Map();
+      for (const [cat, arr] of Object.entries(allSkillsUI)){
+        for (const label of arr){
+          map.set(canon(label), cat);
+        }
+      }
+      return map;
+    })();
 
-        // se la categoria è sbagliata, segnalo in console e salto
-        if(!Array.isArray(items)){
-          console.error('Categoria non trovata in allSkillsUI:', cat);
-          list.innerHTML = '<em style="opacity:.7">No skills found for this category.</em>';
-          return;
-        }
+    /* Salva lo stato delle skill della pagina corrente */
+    function saveSkills() {
+      const pageId = state.page.split('-')[1]; 
+      const cat = Object.keys(allSkillsUI).find(c => pageId && c.toLowerCase().includes(pageId));
+      
+      if (!cat) return;
+      
+      const list = document.querySelector(`[data-skilllist="${cat}"]`);
+      if (!list) return;
 
-        list.innerHTML = '';
-        items.forEach(skill=>{
-          const id = `${cat}-${skill}`.replace(/[^a-z0-9]+/gi,'_');
-          const label = document.createElement('label');
-          label.setAttribute('for', id);
+      const selected = Array.from(list.querySelectorAll('input:checked'))
+                     .map(input => input.value);
+      
+      state.skills[cat] = selected;
+    }
 
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.id = id;
-          cb.value = skill;
-          cb.name = 'skill';
-          if(selected.has(skill)) cb.checked = true;
+    /* Monta skill list preservando selezioni */
+    function mountSkills(){
+      const pageRoot = document.getElementById(state.page);
+      if (!pageRoot) return;
 
-          cb.addEventListener('change', ()=>{
-            if(cb.checked) selected.add(skill); else selected.delete(skill);
-            state.skills[cat] = Array.from(selected);
-          });
+      pageRoot.querySelectorAll('[data-skilllist]').forEach(list=>{
+        const cat=list.getAttribute('data-skilllist');
+        const selected=new Set(state.skills[cat]||[]);
+        list.innerHTML='';
 
-          label.prepend(cb);
-          label.append(' ', skill);
-          list.appendChild(label);
-        });
-      });
-    }
+        list.classList.remove('four', 'one');
+        if (cat === 'Technical') {
+          list.classList.add('four');
+        } else if (cat === 'Personal/Soft') {
+          list.classList.add('one');
+        }
 
+        (allSkillsUI[cat]||[]).forEach(skill=>{
+          const id=`${cat}-${skill}`.replace(/[^a-z0-9]+/gi,'_');
+          const label=document.createElement('label'); label.setAttribute('for', id);
+          const cb=document.createElement('input'); cb.type='checkbox'; cb.id=id; cb.value=skill; cb.name='skill';
+          if(selected.has(skill)) cb.checked=true;
+          cb.addEventListener('change',()=>{ 
+            const currentSelected = Array.from(list.querySelectorAll('input:checked')).map(input => input.value);
+            state.skills[cat] = currentSelected;
+          });
+          label.prepend(cb); label.append(' ', skill); list.appendChild(label);
+        });
+      });
+    }
 
-   function onContinue(){
-      const i = steps.indexOf(state.page);
-      const next = steps[i+1] || 'results';
+    function onContinue(){
+      const i=steps.indexOf(state.page); const next=steps[i+1]||'results';
+      if(state.page.startsWith('skills')) { saveSkills(); }
+      if(state.page==='role-selection' && !state.selections.role) return;
+      if(state.page==='context-selection' && !state.selections.sector) return;
+      if(state.page==='skills-technical'){ go('loading'); return; }
+      go(next);
+    }
 
-      if (state.page === 'role-selection' && !state.selections.role) return;
-      if (state.page === 'context-selection' && !state.selections.sector) return;
+    /* Loading */
+    let loadingTimer=null, loadingStep=0;
+    function startLoading(){
+      const bar=document.getElementById('progressBar');
+      loadingStep=0; bar.style.width='0%';
+      if(loadingTimer){ clearInterval(loadingTimer); loadingTimer=null; }
+      loadingTimer=setInterval(()=>{
+        loadingStep+=25; bar.style.width=loadingStep+'%';
+        if(loadingStep>=100){ clearInterval(loadingTimer); setTimeout(()=>go('results'),300); }
+      },1000);
+    }
 
-      // ora l'ultima pagina skills è "skills-interaction"
-      if (state.page === 'skills-interaction'){ 
-        go('loading'); 
-        return; 
-      }
+    /* ---------- Calcolo percentuali SOLO da correctSkillsData ---------- */
+    function getCorrectListForContext(){
+      const ctx=state.selections.sector; const role=state.selections.role;
+      if(!ctx || !role) return [];
+      const map=correctSkillsData[ctx]||{}; return map[role]||[];
+    }
 
-      go(next);
-    }
+    // Per categoria: {pct, userCorrectCount, totalCorrectInCat}
+    function categoryPercentage(catName, correctListRaw){
+      const correctList = uniq(correctListRaw);
+      const correctInCat = correctList.filter(s => skillToCategory.get(s) === catName);
+      const denom = correctInCat.length;
+      const userSelCanon = new Set(uniq(state.skills[catName] || []));
+      let num = 0;
+      for (const s of correctInCat){ if (userSelCanon.has(s)) num++; }
+      const pct = denom ? Math.round((num / denom) * 100) : 0;
+      return { pct, userCorrectCount: num, totalCorrectInCat: denom };
+    }
 
-    /* Loading */
-    let loadingTimer=null, loadingStep=0;
-    function startLoading(){
-      const bar=document.getElementById('progressBar');
-      loadingStep=0; bar.style.width='0%';
-      if(loadingTimer){ clearInterval(loadingTimer); loadingTimer=null; }
-      loadingTimer=setInterval(()=>{
-        loadingStep+=25; bar.style.width=loadingStep+'%';
-        if(loadingStep>=100){ clearInterval(loadingTimer); setTimeout(()=>go('results'),300); }
-      },1000);
-    }
+    function renderResults(){
+      const r=state.snapshots.role||{}; const s=state.snapshots.sector||{};
+      const roleCard=document.getElementById('res-role'); const sectCard=document.getElementById('res-sector');
+      roleCard.style.setProperty('--card-bg', r.color||'#999');
+      sectCard.style.setProperty('--card-bg', s.color||'#999');
+      document.getElementById('res-role-title').textContent=r.title||'—';
+      document.getElementById('res-sector-title').textContent=s.title||'—';
 
-    /* ---------- Calcolo percentuali SOLO da correctSkillsData ---------- */
-    function getCorrectListForContext(){
-      const ctx=state.selections.sector; const role=state.selections.role;
-      if(!ctx || !role) return [];
-      const map=correctSkillsData[ctx]||{}; return map[role]||[];
-    }
+      const correctList=getCorrectListForContext();
+      const cats=["Personal/Soft","Management","Collab/Comm","Interaction/UX","Analytical","Operational","Technical"];
+      const container=document.getElementById('resultsByCat'); container.innerHTML='';
 
-    // Per categoria: {pct, userCorrectCount, totalCorrectInCat}
-    function categoryPercentage(catName, correctListRaw){
-      const correctList = uniq(correctListRaw);
-      const correctInCat = correctList.filter(s => skillToCategory.get(s) === catName);
-      const denom = correctInCat.length;
-      const userSelCanon = new Set(uniq(state.skills[catName] || []));
-      let num = 0;
-      for (const s of correctInCat){ if (userSelCanon.has(s)) num++; }
-      const pct = denom ? Math.round((num / denom) * 100) : 0;
-      return { pct, userCorrectCount: num, totalCorrectInCat: denom };
-    }
+      let sumUserCorrect=0, sumTotalCorrect=0;
 
-    function renderResults(){
-      const r=state.snapshots.role||{}; const s=state.snapshots.sector||{};
-      const roleCard=document.getElementById('res-role'); const sectCard=document.getElementById('res-sector');
-      roleCard.style.setProperty('--card-bg', r.color||'#999');
-      sectCard.style.setProperty('--card-bg', s.color||'#999');
-      document.getElementById('res-role-title').textContent=r.title||'—';
-      document.getElementById('res-sector-title').textContent=s.title||'—';
+      cats.forEach(cat=>{
+        const {pct, userCorrectCount, totalCorrectInCat}=categoryPercentage(cat, correctList);
+        sumUserCorrect+=userCorrectCount; sumTotalCorrect+=totalCorrectInCat;
 
-      const correctList=getCorrectListForContext();
-      const cats=["Personal/Soft","Management","Collab/Comm","Interaction/UX","Analytical","Operational","Technical"];
-      const container=document.getElementById('resultsByCat'); container.innerHTML='';
+        const row=document.createElement('div'); row.className='cat-row';
+        const name=document.createElement('div'); name.className='cat-name'; name.textContent=cat;
+        const bar=document.createElement('div'); bar.className='cat-bar';
+        const fill=document.createElement('span');
 
-      let sumUserCorrect=0, sumTotalCorrect=0;
+        let color='var(--mid)'; if(pct<30) color='var(--bad)'; else if(pct>60) color='var(--ok)';
+        fill.style.background = color;
+        bar.appendChild(fill);
 
-      cats.forEach(cat=>{
-        const {pct, userCorrectCount, totalCorrectInCat}=categoryPercentage(cat, correctList);
-        sumUserCorrect+=userCorrectCount; sumTotalCorrect+=totalCorrectInCat;
+        const pctEl=document.createElement('div'); pctEl.className='cat-pct'; pctEl.textContent=pct+'%';
 
-        const row=document.createElement('div'); row.className='cat-row';
-        const name=document.createElement('div'); name.className='cat-name'; name.textContent=cat;
-        const bar=document.createElement('div'); bar.className='cat-bar';
-        const fill=document.createElement('span');
+        row.appendChild(name); row.appendChild(bar); row.appendChild(pctEl);
+        container.appendChild(row);
 
-        let color='var(--mid)'; if(pct<30) color='var(--bad)'; else if(pct>60) color='var(--ok)';
-        fill.style.background = color;
-        bar.appendChild(fill);
+        requestAnimationFrame(()=>{ fill.style.width = pct + '%'; });
+      });
 
-        const pctEl=document.createElement('div'); pctEl.className='cat-pct'; pctEl.textContent=pct+'%';
+      const finalPct = sumTotalCorrect ? Math.round((sumUserCorrect/sumTotalCorrect)*100) : 0;
+      document.getElementById('finalScoreBox').textContent=`Final score: ${finalPct}% correct answers`;
+        
+      // Update mini-card images for results page
+      const roleCardOriginal = document.querySelector(`.card[data-group="role"][data-value="${state.selections.role}"]`);
+      const sectorCardOriginal = document.querySelector(`.card[data-group="sector"][data-value="${state.selections.sector}"]`);
+      
+      if (roleCardOriginal) {
+        document.querySelector('#res-role .card__image').innerHTML = roleCardOriginal.querySelector('.card__content > img').outerHTML;
+      }
+      if (sectorCardOriginal) {
+        document.querySelector('#res-sector .card__image').innerHTML = sectorCardOriginal.querySelector('.card__content > img').outerHTML;
+      }
+    }
 
-        row.appendChild(name); row.appendChild(bar); row.appendChild(pctEl);
-        container.appendChild(row);
+    /* Close: torna all’inizio e resetta stato/selezioni */
+    function resetState(){
+      state.history = [];
+      state.selections = { role:null, sector:null };
+      state.snapshots = { role:null, sector:null };
+      state.skills = {};
+      document.querySelectorAll('.card.card--selected').forEach(c=>c.classList.remove('card--selected'));
+      updateBottomBar();
+      renderDots();
+    }
+    
+    // FUNZIONE AGGIUNTA PER SALVARE I DATI
+    async function saveDataAndRestart(){
+      const job = document.getElementById('job-final')?.value?.trim();
+      const industry = document.getElementById('industry-final')?.value?.trim();
+      const country = document.getElementById('country-final')?.value?.trim();
+      const finalScoreText = document.getElementById('finalScoreBox')?.textContent || 'Final score: 0% correct answers';
 
-        requestAnimationFrame(()=>{ fill.style.width = pct + '%'; });
-      });
+      if(!job || !industry || !country){
+        alert("Per favore, inserisci tutte le informazioni richieste prima di salvare.");
+        return;
+      }
+      
+      const selectedSkills = {};
+      Object.keys(allSkillsUI).forEach(cat=>{
+        selectedSkills[cat] = Array.isArray(state.skills[cat]) ? [...state.skills[cat]] : [];
+      });
 
-      const finalPct = sumTotalCorrect ? Math.round((sumUserCorrect/sumTotalCorrect)*100) : 0;
-      document.getElementById('finalScoreBox').textContent=`Final score: ${finalPct}% correct answers`;
-    }
+      const payload = {
+        job,
+        industry,
+        country,
+        context: state.selections.sector || null,
+        role: state.selections.role || null,
+        selectedSkills,
+        finalScore: finalScoreText,
+        timestamp: new Date().toISOString()
+      };
 
-    /* ---- Salvataggio su /updatechart e reset ---- */
-    async function saveDataAndReset(){
-      const job = document.getElementById('job-final')?.value?.trim();
-      const industry = document.getElementById('industry-final')?.value?.trim();
-      const country = document.getElementById('country-final')?.value?.trim();
+      try{
+        const resp = await fetch('/updatechart', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await resp.json();
+        if(!resp.ok || !json.success){
+          console.error('Errore salvataggio:', json);
+          alert('Errore nel salvataggio dei dati.');
+          return;
+        }
+        startNewSession();
+      }catch(err){
+        console.error('Errore di comunicazione:', err);
+        alert('Si è verificato un errore di comunicazione con il server.');
+      }
+    }
 
-      if(!job || !country){
-        alert("Per favore, inserisci tutte le informazioni richieste.");
-        return;
-      }
-
-      // finalScore come stringa leggibile (es. "Final score: 72% correct answers")
-      const finalScoreText = document.getElementById('finalScoreBox')?.textContent || '';
-
-      // selectedSkills nel formato { categoria: string[] }
-      const selectedSkills = {};
-      Object.keys(allSkillsUI).forEach(cat=>{
-        selectedSkills[cat] = Array.isArray(state.skills[cat]) ? [...state.skills[cat]] : [];
-      });
-
-      const payload = {
-        job,
-        country,
-        context: state.selections.sector || null,
-        role: state.selections.role || null,
-        scenario: state.selections.sector || null, // per compatibilità col tuo server
-        selectedSkills,
-        finalScore: finalScoreText,
-        timestamp: new Date().toISOString()
-      };
-
-      try{
-        const resp = await fetch('/updatechart', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const json = await resp.json();
-        if(!resp.ok || !json.success){
-          console.error('Errore salvataggio:', json);
-          alert('Errore nel salvataggio dei dati.');
-          return;
-        }
-        // ok: reset e torna all’intro
-        startNewSession();
-      }catch(err){
-        console.error('Errore di comunicazione:', err);
-        alert('Si è verificato un errore di comunicazione con il server.');
-      }
-    }
-
-    function resetState(){
-      state.history = [];
-      state.selections = { role:null, sector:null };
-      state.snapshots = { role:null, sector:null };
-      state.skills = {};
-      document.querySelectorAll('.card.card--selected').forEach(c=>c.classList.remove('card--selected'));
-      updateBottomBar();
-      renderDots();
-    }
     function startNewSession(){
-      resetState();
-      go('intro');
-    }
+      resetState();
+      go('intro');
+    }
 
-    /* Init */
-    window.go=go; window.goBack=goBack; window.handleSelect=handleSelect; window.onContinue=onContinue;
-    window.saveDataAndReset = saveDataAndReset;
-
-    document.addEventListener('DOMContentLoaded', ()=>{
-      renderDots(); setActivePage('intro');
-      document.getElementById('startBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); if(state.page) state.history.push(state.page); setActivePage('role-selection'); });
-    });
-  </script>
+    /* Init */
+    window.go=go; window.goBack=goBack; window.handleSelect=handleSelect; window.onContinue=onContinue; window.saveDataAndRestart=saveDataAndRestart;
+    document.addEventListener('DOMContentLoaded', ()=>{
+      renderDots(); setActivePage('intro');
+      document.getElementById('startBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); if(state.page) state.history.push(state.page); setActivePage('role-selection'); });
+    });
+  </script>
 </body>
 </html>
