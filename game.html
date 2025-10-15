@@ -580,10 +580,10 @@
         // --- LOGICA DI CONTROLLO STATO AGGIORNATA ---
         if(state.page==='role-selection'){
             contBtn.disabled = !state.selections.role;
-            contBtn.id = 'btn-continue-role';
+            contBtn.id = 'btn-continue';
         } else if(state.page==='context-selection'){
             contBtn.disabled = !state.selections.sector;
-            contBtn.id = 'btn-continue-sector';
+            contBtn.id = 'btn-continue';
         } else if (state.page.startsWith('skills')) {
             contBtn.disabled = false;
             contBtn.id = `btn-continue-${state.page.split('-')[1]}`;
