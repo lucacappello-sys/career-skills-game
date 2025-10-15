@@ -4,33 +4,33 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Skills Transformation Map</title>
-  <link rel="manifest" href="manifest.json">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
 
   <style>
     :root{
-      --page-bg:#f3f5f9;
-      --text-strong:#0f172a; --text-body:#334155; --muted:#64748b;
-      --btn:#1e3a8a; --btn-hover:#15357f;
+      --page-bg:#F8F8F8;
+      --text-strong:#000000; --text-body:#334155; --muted:#64748b;
+      --btn:#264C9E; --btn-hover:#264C9E;
       --stroke:#e5e7eb; --shadow:0 12px 32px rgba(16,24,40,.10);
       --radius-outer:24px; --radius-btn:999px; --radius-card:20px;
       --highlight:#929AAF;
       --bar-h: 64px;
 
       /* banner */
-      --banner-bg:#eaf3ff; --banner-stroke:#d6e6ff; --banner-h: 86px;
+      --banner-bg:#EAEFF6; --banner-stroke:#d6e6ff; --banner-h: 86px;
 
       /* respiro verticale */
       --vpad: clamp(16px, 3vh, 40px);
 
       /* palette cards */
-      --role-operator:#38a7c2; --role-supervisor:#e09938; --role-tech:#1c4587;
-      --sect-1:#7966d5; --sect-2:#4b64d8; --sect-3:#6b6ac8;
+      --role-operator:#3FACE2; --role-supervisor:#E69B38; --role-tech:#2956A5;
+      --sect-1:#A7A8D4; --sect-2:#8182B6; --sect-3:#6563AA;
 
       /* skills panel */
-      --panel:#f7f9fe; --panel-stroke:#e6ecf8;
+      --panel:#F2F2F2; --panel-stroke:#e6ecf8;
 
       /* results colors */
       --ok:#22c55e; --mid:#f59e0b; --bad:#ef4444;
@@ -103,7 +103,7 @@
     .card--readonly{ pointer-events:none; cursor:default }
     .card__label{ position:absolute; top:10px; left:10px; font-size:12px; font-weight:600; opacity:.95 }
     .card__content{ width:100%; height:100%; display:flex; flex-direction:column; align-items:center; text-align:center }
-    .card__image{ width:100%; height: clamp(120px, 22vh, 160px); background:#fff; border-radius:14px; box-shadow: inset 0 0 0 1px #eaeaea; margin-bottom:16px; display:grid; place-items:center; color:#94a3b8; font-size:12px; flex:0 0 auto; object-fit:contain; }
+    .card__image{ width:100%; height: clamp(120px, 22vh, 160px); background:#fff; border-radius:14px; box-shadow: inset 0 0 0 1px #eaeaea; margin-bottom:16px; display:grid; place-items:center; color:#94a3b8; font-size:12px; flex:0 0 auto; object-fit: fill; }
     .card__title{ margin:4px 0 8px; font-size:20px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; text-align:center; flex:0 0 auto; }
     .card__desc{
       margin:0; font-size:13px; line-height:1.5; opacity:.95; text-align:center;
@@ -123,7 +123,7 @@
     /* ====== Skills ====== */
     .skills-wrap{ display:flex; flex-direction:column; align-items:center; gap:16px; width:100% }
     .skills-title{ margin:0; font-size:18px; text-align:center }
-    .skills-panel{ width:min(700px, 92%); background:var(--panel); border:1px solid var(--panel-stroke); border-radius:16px; box-shadow: var(--shadow); padding:18px 20px; }
+    .skills-panel{ width:920px; background:var(--panel); border:1px solid var(--panel-stroke); border-radius:16px; box-shadow: var(--shadow); padding:18px 20px; }
     .skills-list{ display:grid; grid-template-columns:repeat(2, 1fr); gap:12px 20px; font-size:14px; }
     .skills-list.four{ grid-template-columns: repeat(4, 1fr) }
     .skills-list.one{ grid-template-columns: 1fr }
@@ -214,7 +214,7 @@
             <article class="card" data-group="role" data-value="Operator" style="--card-bg: var(--role-operator)" onclick="handleSelect(this)">
               <span class="card__label">Role 1</span>
               <div class="card__content">
-                <img src="Smart operator.png" class="card__image" alt="Smart Line Operator">
+                <img src="Smart operator.png" class="card__image" alt="Smart Line Operator" >
                 <h3 class="card__title">SMART LINE OPERATOR</h3>
                 <p class="card__desc">Works alongside robots in shared areas, supervises their operations, and performs basic troubleshooting. As robots handle the most manual and repetitive tasks, this role requires broader skills than before, especially technical, analytical, and collaboration skills.</p>
               </div>
@@ -222,7 +222,7 @@
             <article class="card" data-group="role" data-value="Supervisor" style="--card-bg: var(--role-supervisor)" onclick="handleSelect(this)">
               <span class="card__label">Role 2</span>
               <div class="card__content">
-                <img src="Plant.png" class="card__image" alt="Plant Flow-Keeper">
+                <img src="Plant.png" class="card__image" alt="Plant Flow-Keeper" >
                 <h3 class="card__title">PLANT FLOW-KEEPER</h3>
                 <p class="card__desc">Manages and coordinates the team and work area, supervises production flows, supports operators and robots and ensures process efficiency. The role combines strong management, technical, operational, and analytical skulls to plan activities, resolve medium-level issues, and maintain smooth and safe production operations.</p>
               </div>
@@ -230,7 +230,7 @@
             <article class="card" data-group="role" data-value="Maintenance technician" style="--card-bg: var(--role-tech)" onclick="handleSelect(this)">
               <span class="card__label">Role 3</span>
               <div class="card__content">
-                <img src="Tech.png" class="card__image" alt="Tech Solver">
+                <img src="Tech.png" class="card__image" alt="Tech Solver" >
                 <h3 class="card__title">TECH SOLVER</h3>
                 <p class="card__desc">Acts as the reference for programming robots, configuring systems to optimise production processes, performing maintenance, and solving technical issues. Requires strong technical skills on new programming codes and solid analytical skills.</p>
               </div>
@@ -250,7 +250,7 @@
             <article class="card" data-group="sector" data-value="Food Sector" style="--card-bg: var(--sect-1)" onclick="handleSelect(this)">
               <span class="card__label">Sector 1</span>
               <div class="card__content">
-                <img src="Food.png" class="card__image" alt="Food Sector">
+                <img src="Food.png" class="card__image" alt="Food Sector" style="object-fit: contain">
                 <h3 class="card__title">FOOD SECTOR</h3>
                 <p class="card__desc">In the food sector, products are received directly from the field in various-sized boxes and bins. These items need to be sorted gently based on dimensions, and then packed to meet market requirements. The new Industry 5.0 technologies enable automated sorting and packing by using new gripping concepts, increasing efficiency and ensuring product quality.</p>
               </div>
@@ -258,7 +258,7 @@
             <article class="card" data-group="sector" data-value="Automotive Sector" style="--card-bg: var(--sect-2)" onclick="handleSelect(this)">
               <span class="card__label">Sector 2</span>
               <div class="card__content">
-                <img src="Automotive.png" class="card__image" alt="Automotive Sector">
+                <img src="Automotive.png" class="card__image" alt="Automotive Sector" style="object-fit: contain">
                 <h3 class="card__title">AUTOMOTIVE SECTOR</h3>
                 <p class="card__desc">In the automotive sector, common activities include order preparation for part delivery, kitting, and assembly. Robotics technologies aim to enhance productivity by performing tasks like sorting, identifying, and packing parts for shipment, while also reducing errors.</p>
               </div>
@@ -266,7 +266,7 @@
             <article class="card" data-group="sector" data-value="Logistic Sector" style="--card-bg: var(--sect-3)" onclick="handleSelect(this)">
               <span class="card__label">Sector 3</span>
               <div class="card__content">
-                <img src="Logistic.png" class="card__image" alt="Logistic Sector">
+                <img src="Logistic.png" class="card__image" alt="Logistic Sector" style="object-fit: contain">
                 <h3 class="card__title">LOGISTIC SECTOR</h3>
                 <p class="card__desc">The logistics sector deals with a challenging variety of products. The new Industry 5.0 technologies aim at streamlining the order preparation process and stock management by using AI-enhanced robots, capable of handling diverse product characteristics.</p>
               </div>
@@ -486,10 +486,11 @@
     const steps = [
       'intro',
       'role-selection','context-selection','review',
-      'skills-personal','skills-management','skills-collab','skills-interaction',
-      'skills-analytical','skills-operational','skills-technical',
+      'skills-technical','skills-operational','skills-analytical','skills-collab',
+      'skills-management','skills-personal','skills-interaction',
       'loading','results','info-save'
     ];
+
 
     /* Scelte UI (anche indice skill→categoria) */
     const allSkillsUI = {
@@ -555,34 +556,63 @@
     }
 
     function handleSelect(cardEl){
-      const group=cardEl.dataset.group; const value=cardEl.dataset.value;
-      document.querySelectorAll(`.card[data-group="${group}"]`).forEach(c=>c.classList.remove('card--selected'));
+      const group=cardEl.dataset.group; 
+      const value=cardEl.dataset.value;
+
+      document.querySelectorAll(`.card[data-group="${group}"]`)
+        .forEach(c=>c.classList.remove('card--selected'));
       cardEl.classList.add('card--selected');
+
       state.selections[group]=value;
+
       const style=getComputedStyle(cardEl);
       const color=style.getPropertyValue('--card-bg') || style.backgroundColor;
       const title=cardEl.querySelector('.card__title')?.textContent?.trim() || '';
       const desc =cardEl.querySelector('.card__desc')?.textContent?.trim() || '';
-      state.snapshots[group]={ title, desc, color: color.trim() };
-      updateBottomBar(); updateSkillsSubtitle();
+      const img  =cardEl.querySelector('img.card__image')?.getAttribute('src') || '';
+
+      state.snapshots[group]={ title, desc, color: color.trim(), img };
+      updateBottomBar(); 
+      updateSkillsSubtitle();
     }
 
     function hydrateReview(){
-      const r=state.snapshots.role||{}; const s=state.snapshots.sector||{};
-      const rCard=document.getElementById('review-role'); const sCard=document.getElementById('review-sector');
-      rCard.style.setProperty('--card-bg', r.color||'#888'); sCard.style.setProperty('--card-bg', s.color||'#888');
+      const r=state.snapshots.role||{}; 
+      const s=state.snapshots.sector||{};
+
+      const rCard=document.getElementById('review-role'); 
+      const sCard=document.getElementById('review-sector');
+
+      rCard.style.setProperty('--card-bg', r.color||'#888'); 
+      sCard.style.setProperty('--card-bg', s.color||'#888');
+
       document.getElementById('review-role-title').textContent=r.title||'—';
       document.getElementById('review-role-desc').textContent=r.desc||'—';
       document.getElementById('review-sector-title').textContent=s.title||'—';
       document.getElementById('review-sector-desc').textContent=s.desc||'—';
-    }
 
-    function getChosenRoleTitle(){ return (state.snapshots.role && state.snapshots.role.title) || state.selections.role || 'the role'; }
-    function getChosenSectorTitle(){ return (state.snapshots.sector && state.snapshots.sector.title) || state.selections.sector || 'the sector'; }
-    function updateSkillsSubtitle(){
-      const role=getChosenRoleTitle(); const sect=getChosenSectorTitle();
-      const text=`Choose different skills that allow ${role} to work in ${sect}`;
-      document.querySelectorAll('.skills-subtitle').forEach(el=>el.textContent=text);
+      // --- immagini (ruolo) ---
+      const rImgHolder = rCard.querySelector('.card__image');
+      if (rImgHolder){
+        rImgHolder.textContent = ''; // rimuovi la scritta "image"
+        rImgHolder.style.backgroundColor = '#fff';
+        rImgHolder.style.backgroundImage  = r.img ? `url("${r.img}")` : 'none';
+        rImgHolder.style.backgroundRepeat = 'no-repeat';
+        rImgHolder.style.backgroundPosition = 'center';
+        rImgHolder.style.backgroundSize = 'contain';
+      }
+
+      // --- immagini (settore) ---
+      const sImgHolder = sCard.querySelector('.card__image');
+      if (sImgHolder){
+        sImgHolder.textContent = '';
+        sImgHolder.style.backgroundColor = '#fff';
+        sImgHolder.style.backgroundImage  = s.img ? `url("${s.img}")` : 'none';
+        sImgHolder.style.backgroundRepeat = 'no-repeat';
+        sImgHolder.style.backgroundPosition = 'center';
+        sImgHolder.style.backgroundSize = 'contain';
+        
+      }
     }
 
     /* ---------- Normalizzazione & alias ---------- */
@@ -630,11 +660,19 @@
       });
     }
 
-    function onContinue(){
-      const i=steps.indexOf(state.page); const next=steps[i+1]||'results';
-      if(state.page==='role-selection' && !state.selections.role) return;
-      if(state.page==='context-selection' && !state.selections.sector) return;
-      if(state.page==='skills-technical'){ go('loading'); return; }
+   function onContinue(){
+      const i = steps.indexOf(state.page);
+      const next = steps[i+1] || 'results';
+
+      if (state.page === 'role-selection' && !state.selections.role) return;
+      if (state.page === 'context-selection' && !state.selections.sector) return;
+
+      // ora l'ultima pagina skills è "skills-interaction"
+      if (state.page === 'skills-interaction'){ 
+        go('loading'); 
+        return; 
+      }
+
       go(next);
     }
 
