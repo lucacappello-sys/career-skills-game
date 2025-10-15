@@ -178,9 +178,16 @@
       text-align:center;
     }
     .info-shell h3{ margin:0 0 4px; font-size:22px; color:#233876 }
-    .info-form{ width:100%; max-width:420px; display:flex; flex-direction:column; gap:16px; align-items:stretch; }
+    .info-form{ width:100%; 
+        max-width:420px; 
+        display:flex; 
+        flex-direction:column; 
+        gap:20px; /* Aumentiamo il gap per dare più spazio verticale tra i campi */
+        align-items:center; /* Centra orizzontalmente i contenitori dei campi */
+        padding: 0 10px; /* Aggiungi un po' di padding laterale se necessario */
+    }
     .info-form label{ font-weight:700; font-size:14px; color:#0f172a; text-align:left }
-    .info-form input{ height:40px; padding:8px 12px; border:1px solid #bcd0f5; border-radius:6px; font-size:14px; background:#fff; }
+    .info-form input{ height:40px; width: 80%; padding:8px 12px; border:1px solid #bcd0f5; border-radius:6px; font-size:14px; background:#fff; }
     .close-btn{
       margin-top:4px; display:inline-flex; align-items:center; justify-content:center;
       padding:12px 28px; border-radius:999px; background:var(--btn); color:#fff; border:none; cursor:pointer; font-weight:700;
@@ -457,8 +464,12 @@
             <!-- QUI: submit -> saveDataAndReset -->
             <form class="info-form" onsubmit="event.preventDefault(); saveDataAndReset();">
               <div>
-                <label for="job-final">Your job *</label>
+                <label for="job-final">Job title / Role *</label>
                 <input type="text" id="job-final" required placeholder="Input">
+              </div>
+              <div>
+                <label for="industry-final">Industry / Sector *</label>
+                <input type="text" id="industry-final" required placeholder="Input">
               </div>
               <div>
                 <label for="country-final">Country where you work *</label>
@@ -476,7 +487,7 @@
   <!-- Bottom bar -->
   <div class="bottombar" role="navigation" aria-label="Navigation">
     <button id="btn-back" class="back-btn" onclick="goBack()">← Back</button>
-    <div class="home" onclick="go('intro')" title="Home">🏠</div>
+    <div class="home" onclick="go('intro')" title="Home"></div>
     <div class="dots" id="dots"></div>
     <button id="btn-continue" class="btn btn-primary" disabled onclick="onContinue()">Continue →</button>
   </div>
@@ -545,7 +556,7 @@
       if(id === 'loading') startLoading();
       if(id === 'results') renderResults();
     }
-    
+
     function go(id){ if(state.page) state.history.push(state.page); setActivePage(id); }
     function goBack(){ if(state.history.length){ const prev=state.history.pop(); setActivePage(prev); } else { setActivePage('intro'); } }
 
@@ -607,7 +618,6 @@
         rImgHolder.style.backgroundImage  = r.img ? `url("${r.img}")` : 'none';
         rImgHolder.style.backgroundRepeat = 'no-repeat';
         rImgHolder.style.backgroundPosition = 'center';
-        rImgHolder.style.backgroundSize = 'fill';
       }
 
       // --- immagini (settore) ---
@@ -784,7 +794,9 @@
     /* ---- Salvataggio su /updatechart e reset ---- */
     async function saveDataAndReset(){
       const job = document.getElementById('job-final')?.value?.trim();
+      const industry = document.getElementById('industry-final')?.value?.trim();
       const country = document.getElementById('country-final')?.value?.trim();
+
       if(!job || !country){
         alert("Per favore, inserisci tutte le informazioni richieste.");
         return;
